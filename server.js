@@ -9,7 +9,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
-// Security - CSP disabled for now to allow inline onclick handlers
+// CRITICAL: Trust proxy - required for Railway/any cloud host behind a load balancer
+app.set('trust proxy', 1);
+
+// Security - CSP disabled for inline onclick handlers
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
 app.use(express.json({ limit: '10kb' }));
@@ -51,7 +54,11 @@ app.post('/api/grade', apiLimiter, async (req, res) => {
       headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1024, system: systemPrompt, messages: [{ role: 'user', content: userMsg }] }),
     });
-    if (!response.ok) return res.status(502).json({ error: 'Grading service temporarily unavailable.' });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      console.error('Anthropic API error:', response.status, JSON.stringify(err));
+      return res.status(502).json({ error: 'Grading service temporarily unavailable.' });
+    }
     const data = await response.json();
     const text = data.content?.map(c => c.text || '').join('') || '';
     const result = JSON.parse(text.replace(/```json|```/g, '').trim());
@@ -124,6 +131,6 @@ app.get('/', (req, res) => {
 
 // Start
 app.listen(PORT, () => {
-  console.log(`\n🎓 Claude Academy running at http://localhost:${PORT}`);
+  console.log(`\n🎓 Prompt AI Academy running at http://localhost:${PORT}`);
   console.log(`   AI Grading: ${ANTHROPIC_API_KEY ? '✅ Active' : '❌ No API key — set ANTHROPIC_API_KEY in .env'}\n`);
 });
