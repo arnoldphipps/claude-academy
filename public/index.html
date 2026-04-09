@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Academy — Master AI in Hours, Not Months</title>
+<meta name="description" content="The interactive training platform that turns complete beginners into Claude power users. Real projects, live AI grading, expert-level skills.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06070b;--sf:#0d0f16;--sf2:#141722;--bd:#1e2436;--ac:#4f9cf7;--ac2:#2d7ff9;--gn:#34d399;--gn2:#10b981;--tx:#eaeff7;--tx2:#b8c4d8;--mt:#7a869e;--dm:#4a5368;--gd:#fcd34d}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,7,11,.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(30,36,54,.5)}
+.nav-logo{font-size:20px;font-weight:900;letter-spacing:-.5px;background:linear-gradient(135deg,var(--ac),var(--gn));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--mt);font-size:14px;font-weight:500;text-decoration:none;transition:color .2s}.nav-links a:hover{color:var(--tx)}
+.nav-cta{background:var(--ac2);color:#fff!important;padding:10px 24px;border-radius:8px;font-weight:700;font-size:14px;transition:all .15s;border:none;cursor:pointer}
+.nav-cta:hover{background:var(--ac);text-decoration:none;box-shadow:0 4px 20px rgba(79,156,247,.3)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(ellipse,rgba(79,156,247,.06) 0%,rgba(52,211,153,.03) 40%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(79,156,247,.08);border:1px solid rgba(79,156,247,.15);padding:8px 20px;border-radius:24px;font-size:13px;font-weight:600;color:var(--ac);margin-bottom:28px;letter-spacing:.5px}
+.hero-badge span{width:8px;height:8px;border-radius:50%;background:var(--gn);box-shadow:0 0 8px rgba(52,211,153,.5);animation:livePulse 2s infinite}
+@keyframes livePulse{0%,100%{opacity:.6}50%{opacity:1}}
+.hero h1{font-size:clamp(40px,6vw,72px);font-weight:900;line-height:1.08;letter-spacing:-2px;margin-bottom:20px;max-width:800px}
+.hero h1 .grad{background:linear-gradient(135deg,var(--ac),var(--gn));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:clamp(16px,2vw,20px);color:var(--tx2);max-width:600px;line-height:1.65;margin-bottom:40px}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn-primary{background:linear-gradient(135deg,var(--ac2),var(--gn2));color:#fff;padding:16px 36px;border-radius:12px;font-size:17px;font-weight:700;border:none;cursor:pointer;transition:all .2s;box-shadow:0 6px 24px rgba(45,127,249,.25)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(45,127,249,.35);text-decoration:none}
+.btn-secondary{background:none;border:1.5px solid var(--bd);color:var(--tx2);padding:15px 32px;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:var(--ac);color:var(--tx);text-decoration:none}
+.hero-stats{display:flex;gap:48px;margin-top:60px;padding-top:40px;border-top:1px solid var(--bd)}
+.hero-stat{text-align:center}.hero-stat-num{font-size:36px;font-weight:900;background:linear-gradient(135deg,var(--ac),var(--gn));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-stat-label{font-size:13px;color:var(--dm);margin-top:4px;font-weight:500}
+
+/* SECTIONS */
+section{padding:100px 24px}.section-inner{max-width:1100px;margin:0 auto}
+.section-badge{display:inline-block;font-size:12px;font-weight:700;color:var(--ac);background:rgba(79,156,247,.08);padding:6px 16px;border-radius:16px;margin-bottom:16px;letter-spacing:1px;text-transform:uppercase;border:1px solid rgba(79,156,247,.12)}
+.section-title{font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-1px;margin-bottom:12px}
+.section-sub{font-size:17px;color:var(--tx2);max-width:560px;line-height:1.65;margin-bottom:48px}
+
+/* HOW IT WORKS */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.how-card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:36px 28px;position:relative;overflow:hidden;transition:all .25s}
+.how-card:hover{border-color:var(--ac);transform:translateY(-4px);box-shadow:0 12px 40px rgba(79,156,247,.08)}
+.how-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--gn));opacity:0;transition:opacity .25s}.how-card:hover::before{opacity:1}
+.how-num{font-size:48px;font-weight:900;background:linear-gradient(135deg,rgba(79,156,247,.15),rgba(52,211,153,.1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px;line-height:1}
+.how-card h3{font-size:20px;font-weight:800;margin-bottom:8px;letter-spacing:-.3px}
+.how-card p{font-size:14px;color:var(--mt);line-height:1.65}
+
+/* MODULES */
+.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.mod-card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:32px;display:flex;gap:20px;transition:all .25s;cursor:default}
+.mod-card:hover{border-color:var(--ac);box-shadow:0 8px 32px rgba(79,156,247,.06)}
+.mod-card-icon{font-size:40px;flex-shrink:0}
+.mod-card h3{font-size:18px;font-weight:800;margin-bottom:4px}.mod-card .mod-sub{font-size:13px;color:var(--ac);font-weight:600;margin-bottom:8px}
+.mod-card p{font-size:13px;color:var(--mt);line-height:1.6}
+.mod-card .les-count{font-size:12px;color:var(--dm);margin-top:10px;font-weight:600}
+
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feat{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:28px 24px;transition:border-color .2s}
+.feat:hover{border-color:var(--bd)}
+.feat-icon{font-size:28px;margin-bottom:14px}
+.feat h3{font-size:16px;font-weight:700;margin-bottom:6px}.feat p{font-size:13px;color:var(--mt);line-height:1.6}
+
+/* TESTIMONIAL / SOCIAL PROOF */
+.proof{background:var(--sf);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.proof-inner{display:flex;align-items:center;gap:48px;max-width:900px;margin:0 auto}
+.proof-quote{font-size:22px;font-weight:500;line-height:1.6;font-style:italic;color:var(--tx2);flex:1}
+.proof-quote::before{content:'"';font-size:64px;line-height:0;vertical-align:bottom;margin-right:4px;background:linear-gradient(135deg,var(--ac),var(--gn));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.proof-attr{font-size:14px;color:var(--dm);margin-top:12px;font-style:normal;font-weight:600}
+
+/* CTA */
+.cta-section{text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(79,156,247,.05) 0%,transparent 60%);pointer-events:none}
+.cta-section h2{font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px}
+.cta-section p{font-size:18px;color:var(--tx2);margin-bottom:36px;max-width:500px;margin-left:auto;margin-right:auto}
+
+/* FOOTER */
+footer{padding:40px 24px;border-top:1px solid var(--bd);text-align:center;color:var(--dm);font-size:13px}
+footer a{color:var(--mt)}
+
+@media(max-width:768px){
+  nav{padding:14px 20px}.nav-links{gap:16px}
+  .how-grid,.feat-grid{grid-template-columns:1fr}.mod-grid{grid-template-columns:1fr}
+  .hero-stats{flex-direction:column;gap:20px}
+  .proof-inner{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">🎓 Claude Academy</div>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#curriculum">Curriculum</a>
+    <a href="#features">Features</a>
+    <a href="/academy" class="nav-cta">Start Training Free →</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><span></span> Live AI-powered training</div>
+  <h1>Become a <span class="grad">Claude expert</span> in one weekend</h1>
+  <p>The interactive training platform with real projects, live AI grading, and a personal AI tutor. Go from "what is Claude?" to building production workflows — faster than any course, book, or tutorial.</p>
+  <div class="hero-btns">
+    <a href="/academy" class="btn-primary">Start the Academy →</a>
+    <a href="#how" class="btn-secondary">See How It Works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">12</div><div class="hero-stat-label">Hands-on Lessons</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">4</div><div class="hero-stat-label">Skill Modules</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">Real-World Projects</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">∞</div><div class="hero-stat-label">AI-Generated Challenges</div></div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="section-inner">
+    <div class="section-badge">How It Works</div>
+    <h2 class="section-title">Learn by building, not watching</h2>
+    <p class="section-sub">Every lesson is a real project. Your AI tutor grades your work in real-time and coaches you to expert-level quality.</p>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">01</div>
+        <h3>Learn the concept</h3>
+        <p>Each lesson teaches one powerful technique with side-by-side comparisons of weak vs. expert approaches. See exactly what separates amateurs from pros.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">02</div>
+        <h3>Build something real</h3>
+        <p>Every module has hands-on projects: competitive analysis reports, automated workflows, sprint plans, full web applications. Real deliverables, not toy examples.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">03</div>
+        <h3>Get graded by AI</h3>
+        <p>Submit your work and Professor Claude — your live AI tutor — grades it with a detailed score, rubric breakdown, strengths, and specific improvement suggestions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="proof">
+  <div class="proof-inner">
+    <div class="proof-quote">
+      Most people use AI at 10% of its potential. Claude Academy doesn't just teach you features — it rewires how you think about working with AI. The difference between a good prompt and a great one is the difference between a mediocre output and a career-changing one.
+      <div class="proof-attr">— The Philosophy Behind Claude Academy</div>
+    </div>
+  </div>
+</section>
+
+<section id="curriculum" style="background:var(--sf)">
+  <div class="section-inner">
+    <div class="section-badge">Curriculum</div>
+    <h2 class="section-title">Four modules. Zero fluff.</h2>
+    <p class="section-sub">Every lesson is built from real projects that Claude helps people with daily. You'll recognize these scenarios from your own work.</p>
+    <div class="mod-grid">
+      <div class="mod-card">
+        <div class="mod-card-icon">🧱</div>
+        <div>
+          <h3>Module 1: Foundations</h3>
+          <div class="mod-sub">How to Think in Claude</div>
+          <p>The 6-component prompt framework, iteration techniques, and the mental models that separate beginners from power users.</p>
+          <div class="les-count">3 interactive lessons · 400 XP</div>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-card-icon">⚡</div>
+        <div>
+          <h3>Module 2: Power Tools</h3>
+          <div class="mod-sub">Files, Search & Creation</div>
+          <p>Build client reports from raw data, conduct competitive research, and automate weekly reporting with Projects.</p>
+          <div class="les-count">3 project lessons · 850 XP</div>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-card-icon">🔗</div>
+        <div>
+          <h3>Module 3: Connected Ecosystem</h3>
+          <div class="mod-sub">Apps & Integrations</div>
+          <p>Triage your inbox with Gmail, run sprint planning with Linear, and automate browser research with Claude in Chrome.</p>
+          <div class="les-count">3 project lessons · 950 XP</div>
+        </div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-card-icon">🧠</div>
+        <div>
+          <h3>Module 4: Expert Techniques</h3>
+          <div class="mod-sub">Advanced Patterns & API</div>
+          <p>Chain-of-thought prompting, building AI-powered applications, and configuring your personal Claude operating system.</p>
+          <div class="les-count">3 lessons · 950 XP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="section-inner">
+    <div class="section-badge">Features</div>
+    <h2 class="section-title">Not your average AI course</h2>
+    <p class="section-sub">Built different from day one. Every feature exists because passive learning doesn't create experts.</p>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-icon">🎓</div>
+        <h3>Live AI Tutor</h3>
+        <p>Professor Claude grades every submission with a numerical score, rubric breakdown, and specific coaching on how to improve.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🆘</div>
+        <h3>Smart Hints</h3>
+        <p>Stuck? Ask for help and get targeted nudges that guide you toward the answer without giving it away. Real teaching, not answer keys.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🏗️</div>
+        <h3>Real Projects</h3>
+        <p>Build actual deliverables: competitive analyses, client reports, sprint plans, and full web applications. Portfolio-worthy work.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🔄</div>
+        <h3>Infinite Challenges</h3>
+        <p>AI-generated bonus challenges keep the training fresh. Every time you practice, the scenarios are new and unpredictable.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📊</div>
+        <h3>XP & Progression</h3>
+        <p>Track your growth from Beginner to Master. Earn XP for completing lessons and passing challenges with high scores.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">⚡</div>
+        <h3>Instant Feedback</h3>
+        <p>No waiting for a human instructor. Submit your work and get expert-level feedback in seconds, not days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="section-inner">
+    <h2>Ready to become <span style="background:linear-gradient(135deg,var(--ac),var(--gn));-webkit-background-clip:text;-webkit-text-fill-color:transparent">dangerous</span>?</h2>
+    <p>12 lessons stand between you and expert-level Claude skills. Start now — your AI tutor is waiting.</p>
+    <a href="/academy" class="btn-primary" style="display:inline-block">Launch Claude Academy →</a>
+  </div>
+</section>
+
+<footer>
+  <p>Claude Academy — An independent training platform for Claude by Anthropic.<br>
+  <a href="https://claude.ai" target="_blank">Try Claude</a> · <a href="https://docs.claude.com" target="_blank">Claude Documentation</a> · <a href="https://console.anthropic.com" target="_blank">Anthropic Console</a></p>
+</footer>
+
+</body>
+</html>

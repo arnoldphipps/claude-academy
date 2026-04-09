@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Academy — Training</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08090d;--sf:#11131a;--sf2:#181c27;--sf3:#1f2435;--bd:#262d3d;--bd2:#323b52;--ac:#4f9cf7;--ac2:#2d7ff9;--ac3:#1a6deb;--gn:#34d399;--gn2:#10b981;--rd:#f87171;--yw:#fbbf24;--yw2:#f59e0b;--tx:#e8ecf4;--tx2:#c1c9d9;--mt:#8892a8;--dm:#5c6478;--gd:#fcd34d}
+html{height:100%}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);height:100%;overflow:hidden;display:flex}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+::selection{background:var(--ac);color:#fff}textarea::placeholder{color:var(--dm)}textarea:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px rgba(79,156,247,.12)}
+button{font-family:inherit;cursor:pointer}button:active{transform:scale(.98)}
+
+.sidebar{width:290px;min-width:290px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+.logo-area{padding:24px 20px 18px;border-bottom:1px solid var(--bd);position:relative;overflow:hidden}
+.logo-area::after{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(79,156,247,.08) 0%,transparent 70%);pointer-events:none}
+.logo{font-size:22px;font-weight:900;letter-spacing:-.6px;background:linear-gradient(135deg,var(--ac),var(--gn));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:10px;color:var(--dm);margin-top:3px;text-transform:uppercase;letter-spacing:3px;font-weight:600}
+.xp-area{padding:16px 20px;border-bottom:1px solid var(--bd)}
+.rank-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.rank-badge{font-size:14px;font-weight:700}.rank-next{font-size:11px;color:var(--dm)}
+.xp-track{height:5px;background:var(--sf2);border-radius:3px;overflow:hidden}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--gn));border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.xp-label{font-size:11px;color:var(--dm);margin-top:5px;text-align:right}
+.mod-scroll{flex:1;overflow-y:auto;padding:8px 0}
+.mod-btn{display:flex;align-items:center;gap:12px;width:100%;padding:13px 18px;background:none;border:none;color:var(--tx);text-align:left;border-left:3px solid transparent;transition:all .15s}
+.mod-btn:hover{background:var(--sf2)}.mod-btn.active{background:var(--sf2);border-left-color:var(--ac)}
+.mod-icon{font-size:22px;width:28px;text-align:center}.mod-meta{flex:1}
+.mod-title{font-size:13px;font-weight:700}.mod-sub{font-size:11px;color:var(--dm);margin-top:1px}
+.mod-prog{font-size:10px;color:var(--dm);font-weight:700;background:var(--sf2);padding:2px 8px;border-radius:10px}
+.les-list{padding:2px 0 6px 22px}
+.les-btn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:none;border:none;color:var(--mt);text-align:left;font-size:12px;border-radius:6px;transition:all .12s}
+.les-btn:hover{background:var(--sf2);color:var(--tx)}.les-btn.active{background:var(--sf3);color:var(--tx)}.les-btn.done{color:var(--gn)}
+.les-check{font-size:11px;width:16px;text-align:center;flex-shrink:0}.les-xp{font-size:10px;color:var(--dm);margin-left:auto;font-weight:600}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--bd);display:flex;gap:12px}
+.stat-pill{flex:1;text-align:center;background:var(--sf2);padding:10px 0;border-radius:8px}
+.stat-num{font-size:20px;font-weight:800;color:var(--ac);display:block}.stat-lbl{font-size:9px;color:var(--dm);text-transform:uppercase;letter-spacing:1px;margin-top:2px;display:block}
+.api-status{display:flex;align-items:center;gap:6px;padding:8px 16px;font-size:11px;border-top:1px solid var(--bd);color:var(--dm)}
+.api-dot{width:7px;height:7px;border-radius:50%}.api-dot.on{background:var(--gn);box-shadow:0 0 6px rgba(52,211,153,.4)}.api-dot.off{background:var(--rd)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.tutor{border-bottom:1px solid var(--bd);background:var(--sf)}
+.tutor-toggle{width:100%;padding:10px 24px;background:none;border:none;color:var(--ac);text-align:left;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.tutor-body{display:flex;align-items:flex-start;gap:14px;padding:0 24px 18px}
+.tutor-avatar{font-size:36px;min-width:44px;text-align:center;filter:drop-shadow(0 0 8px rgba(79,156,247,.2))}
+.tutor-bubble{background:var(--sf2);padding:14px 18px;border-radius:4px 14px 14px 14px;font-size:13.5px;line-height:1.65;border:1px solid var(--bd);max-height:240px;overflow-y:auto;white-space:pre-wrap;flex:1}
+.thinking-dots{display:inline-flex;gap:4px;vertical-align:middle;margin-left:4px}
+.thinking-dots span{width:6px;height:6px;border-radius:50%;background:var(--ac);animation:dotP 1.4s infinite;opacity:.3}
+.thinking-dots span:nth-child(2){animation-delay:.2s}.thinking-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotP{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+.content{flex:1;overflow-y:auto;padding:32px 44px;scroll-behavior:smooth}
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:65vh;text-align:center;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.welcome-badge{font-size:12px;color:var(--ac);background:rgba(79,156,247,.1);padding:6px 16px;border-radius:20px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;border:1px solid rgba(79,156,247,.15)}
+.welcome-emoji{font-size:72px;margin-bottom:20px;filter:drop-shadow(0 8px 24px rgba(79,156,247,.15))}
+.welcome h1{font-size:40px;font-weight:900;margin-bottom:8px;letter-spacing:-.8px;background:linear-gradient(135deg,var(--ac),var(--gn));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.welcome p{font-size:16px;color:var(--mt);margin-bottom:4px}.welcome .sub2{font-size:13px;color:var(--dm);margin-bottom:36px}
+.wc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:620px}
+.wc{display:flex;flex-direction:column;align-items:center;gap:8px;padding:22px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;color:var(--tx);transition:all .2s;position:relative;overflow:hidden}
+.wc:hover{border-color:var(--ac);transform:translateY(-3px);box-shadow:0 0 30px rgba(79,156,247,.15)}
+.wc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--ac),var(--gn));opacity:0;transition:opacity .2s}.wc:hover::after{opacity:1}
+.wc-icon{font-size:28px}.wc-title{font-size:12px;font-weight:700}.wc-sub{font-size:10px;color:var(--dm)}
+.mod-intro{display:flex;flex-direction:column;align-items:center;padding-top:40px;text-align:center;animation:fadeUp .4s ease}
+.mod-intro-icon{font-size:56px;margin-bottom:12px}.mod-intro h2{font-size:32px;font-weight:900}.mod-intro-sub{font-size:15px;color:var(--mt);margin-bottom:32px;margin-top:4px}
+.intro-les-list{display:flex;flex-direction:column;gap:10px;width:100%;max-width:560px}
+.ilc{display:flex;align-items:center;padding:16px 20px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;color:var(--tx);text-align:left;gap:16px;transition:all .2s;width:100%}
+.ilc:hover{border-color:var(--ac);box-shadow:0 0 30px rgba(79,156,247,.1)}
+.ilc-type{font-size:11px;color:var(--dm);min-width:100px;font-weight:600}.ilc-title{flex:1;font-size:14px;font-weight:700}.ilc-xp{font-size:12px;color:var(--ac);font-weight:700}
+.lesson{max-width:780px;margin:0 auto;animation:fadeUp .35s ease}
+.lesson-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:14px;flex-wrap:wrap}
+.back-btn{background:none;border:1px solid var(--bd);color:var(--mt);padding:7px 16px;border-radius:8px;font-size:13px;transition:all .15s}.back-btn:hover{color:var(--tx);border-color:var(--mt)}
+.les-type-badge{font-size:10px;color:var(--ac);letter-spacing:2px;font-weight:800}
+.lesson h2{font-size:26px;font-weight:900;margin:3px 0 0;letter-spacing:-.4px}
+.xp-badge{background:linear-gradient(135deg,rgba(252,211,77,.1),rgba(252,211,77,.05));padding:7px 16px;border-radius:20px;font-size:13px;font-weight:700;color:var(--gd);border:1px solid rgba(252,211,77,.15)}
+.lesson-intro{font-size:15px;line-height:1.75;margin-bottom:20px;color:var(--tx2)}
+.concept-box{background:var(--sf);border:1px solid var(--bd);padding:20px 24px;border-radius:10px;font-size:14px;line-height:1.7;margin-bottom:24px;color:var(--tx2);position:relative}
+.concept-box::before{content:'💡';position:absolute;top:-12px;left:18px;font-size:20px;background:var(--sf);padding:0 6px}
+.demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.demo-label{font-size:11px;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}.demo-label.bad{color:var(--rd)}.demo-label.good{color:var(--gn)}
+.demo-code{background:var(--sf);border:1px solid var(--bd);padding:16px;border-radius:10px;font-size:12px;line-height:1.65;white-space:pre-wrap;font-family:'JetBrains Mono',monospace;color:var(--mt)}.demo-code.good{border-color:rgba(52,211,153,.2);color:var(--tx2)}
+.demo-explain{grid-column:1/-1;background:var(--sf2);padding:14px 18px;border-radius:10px;font-size:13px;line-height:1.65;border-left:3px solid var(--ac);color:var(--tx2)}
+.fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:26px}
+.fw-card{background:var(--sf);border:1px solid var(--bd);padding:18px 20px;border-radius:10px;transition:border-color .2s}.fw-card:hover{border-color:var(--bd2)}
+.fw-head{font-size:15px;font-weight:700;margin-bottom:6px}.fw-desc{font-size:12px;color:var(--mt);line-height:1.55;margin-bottom:10px}
+.fw-ex{font-size:11px;color:var(--dm);white-space:pre-wrap;font-family:'JetBrains Mono',monospace;background:var(--sf2);padding:8px 11px;border-radius:6px}
+.timeline{display:flex;flex-direction:column;margin-bottom:26px}.tl-item{display:flex;gap:16px;padding-bottom:22px;position:relative}
+.tl-item:not(:last-child)::after{content:'';position:absolute;left:14px;top:34px;bottom:0;width:2px;background:var(--bd)}
+.tl-dot{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;color:#fff;z-index:1;box-shadow:0 0 12px rgba(79,156,247,.2)}
+.tl-content{flex:1;padding-top:3px}.tl-title{font-size:14px;font-weight:700;margin-bottom:4px}.tl-desc{font-size:13px;color:var(--mt);line-height:1.6}
+.tl-example{font-size:12px;font-family:'JetBrains Mono',monospace;background:var(--sf);padding:10px 14px;border-radius:8px;margin-top:8px;white-space:pre-wrap;border:1px solid var(--bd);color:var(--tx2)}
+.challenge{background:var(--sf);border:1px solid rgba(251,191,36,.18);padding:26px 30px;border-radius:12px;margin-top:10px;position:relative;overflow:hidden}
+.challenge::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--yw),var(--ac))}
+.ch-title{font-size:18px;font-weight:800;margin-bottom:12px}.ch-task{font-size:14px;line-height:1.75;margin-bottom:16px;white-space:pre-wrap;color:var(--tx2)}
+.ch-weak{background:var(--sf2);padding:12px 16px;border-radius:8px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--rd);margin-bottom:16px;border-left:3px solid var(--rd)}
+.hints{background:var(--sf2);padding:14px 18px;border-radius:8px;margin-bottom:18px;font-size:13px;color:var(--tx2)}.hints ul{margin:8px 0 0;padding-left:20px}.hints li{margin-bottom:4px;color:var(--mt)}
+.input-area{margin:18px 0}.input-label{font-size:13px;font-weight:700;color:var(--ac);margin-bottom:10px}
+.student-ta{width:100%;min-height:150px;background:var(--sf2);border:2px solid var(--bd);border-radius:10px;padding:16px;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--tx);line-height:1.65;resize:vertical;transition:all .2s}
+.btn-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.submit-btn{background:linear-gradient(135deg,var(--ac2),var(--ac3));border:none;color:#fff;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:700;transition:all .15s;box-shadow:0 4px 12px rgba(45,127,249,.2)}.submit-btn:hover{box-shadow:0 6px 20px rgba(45,127,249,.3)}.submit-btn:disabled{opacity:.45;cursor:default;box-shadow:none}
+.help-btn{background:none;border:1.5px solid var(--yw2);color:var(--yw);padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;transition:all .15s}.help-btn:hover{background:rgba(245,158,11,.08)}.help-btn:disabled{opacity:.4;cursor:default}
+.bonus-btn{background:none;border:1.5px solid var(--gn2);color:var(--gn);padding:11px 22px;border-radius:8px;font-size:13px;font-weight:600;transition:all .15s}.bonus-btn:hover{background:rgba(16,185,129,.08)}.bonus-btn:disabled{opacity:.4;cursor:default}
+.rubric-title{font-size:12px;font-weight:700;margin:20px 0 10px;color:var(--ac);text-transform:uppercase;letter-spacing:1px}
+.rubric-list{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.rubric-item{display:flex;align-items:center;gap:10px;font-size:13px;padding:9px 12px;border-radius:8px;background:var(--sf2);border:1px solid var(--bd);transition:all .2s}
+.rubric-item.pass{border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.05)}.rubric-item.fail{border-color:rgba(248,113,113,.2);background:rgba(248,113,113,.04)}
+.rub-dot{width:22px;height:22px;border-radius:5px;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;transition:all .3s}
+.rub-dot.pass{background:rgba(52,211,153,.15);border-color:var(--gn);color:var(--gn)}.rub-dot.fail{background:rgba(248,113,113,.1);border-color:var(--rd);color:var(--rd)}
+.complete-btn{background:linear-gradient(135deg,var(--ac2),var(--gn2));border:none;color:#fff;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:700;width:100%;margin-top:10px;transition:all .15s;box-shadow:0 4px 16px rgba(52,211,153,.2)}.complete-btn:hover{box-shadow:0 6px 24px rgba(52,211,153,.3)}
+.done-tag{text-align:center;font-size:16px;font-weight:700;color:var(--gn);padding:16px}
+.scenario-box{background:var(--sf);border:1px solid var(--bd);padding:20px 24px;border-radius:10px;margin-bottom:24px}
+.scenario-label{font-size:12px;font-weight:700;margin-bottom:8px;color:var(--ac);text-transform:uppercase;letter-spacing:1px}
+.step-nav{display:flex;gap:8px;margin-bottom:20px;justify-content:center}
+.step-dot{width:36px;height:36px;border-radius:50%;border:2px solid var(--bd);background:none;color:var(--dm);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.step-dot.active{background:var(--ac);border-color:var(--ac);color:#fff;box-shadow:0 0 16px rgba(79,156,247,.25)}.step-dot.done{border-color:var(--gn);color:var(--gn)}
+.step-card{background:var(--sf);border:1px solid var(--bd);padding:24px 28px;border-radius:12px;margin-bottom:20px}
+.step-label{font-size:16px;font-weight:800;margin-bottom:12px;color:var(--ac)}.step-inst{font-size:14px;line-height:1.75;margin-bottom:16px;white-space:pre-wrap;color:var(--tx2)}
+.try-it{display:flex;align-items:center;gap:10px;background:var(--sf2);padding:12px 16px;border-radius:8px;font-size:12px;color:var(--yw);border:1px solid rgba(251,191,36,.12)}
+.next-btn{background:var(--ac);border:none;color:#fff;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:700;transition:opacity .15s}.next-btn:hover{opacity:.9}
+.skills-label{font-size:11px;font-weight:700;margin-bottom:8px;color:var(--dm);text-transform:uppercase;letter-spacing:1px}
+.skill-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}.skill-tag{background:rgba(79,156,247,.08);padding:5px 13px;border-radius:20px;font-size:11px;color:var(--ac);border:1px solid rgba(79,156,247,.15);font-weight:600}
+.pro-tip{background:var(--sf);border:1px solid rgba(252,211,77,.15);padding:16px 20px;border-radius:10px;font-size:13px;line-height:1.65;margin-bottom:20px;color:var(--tx2)}
+.celebration{position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;justify-content:center;padding-top:24px;pointer-events:none;animation:celebA 3s ease forwards}
+.celeb-inner{background:linear-gradient(135deg,var(--ac2),var(--gn2));padding:16px 36px;border-radius:14px;font-size:18px;font-weight:800;color:#fff;box-shadow:0 8px 40px rgba(79,156,247,.3)}
+@keyframes celebA{0%{opacity:0;transform:translateY(-30px) scale(.9)}12%{opacity:1;transform:translateY(0) scale(1)}70%{opacity:1}100%{opacity:0;transform:translateY(-15px)}}
+@media(max-width:900px){.sidebar{width:240px;min-width:240px}.content{padding:24px 20px}.demo-grid,.fw-grid{grid-template-columns:1fr}.wc-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.sidebar{display:none}.content{padding:16px}}
+</style>
+</head>
+<body>
+<div class="sidebar" id="sidebar"></div>
+<div class="main"><div class="tutor" id="tutor"></div><div class="content" id="content"></div></div>
+<div class="celebration" id="celebration" style="display:none"><div class="celeb-inner" id="celeb-text"></div></div>
+<script>
+let aiReady=false;
+const S={activeMod:null,activeLes:null,done:new Set(),xp:0,tutor:'',tutorOpen:true,step:0,inputs:{},rubrics:{},grading:false,bonusChallenges:{}};
+const ML=[{id:"m1",title:"Foundations",icon:"🧱",sub:"How to Think in Claude",lessons:[{id:"l1",title:"Your First Real Conversation",type:"interactive",xp:100,content:{intro:"Most people use Claude like a search engine. That's like using a Formula 1 car to go grocery shopping. Let's fix that right now.",concept:"Claude is a reasoning partner, not a query box. The quality of your output is directly proportional to the quality of your input. This is called Prompt Engineering — the single most valuable skill you'll learn.",demo:{bad:"Write me a marketing email",good:"You are a senior copywriter at a B2B SaaS company selling project management software to engineering teams of 50-200 people.\n\nWrite a cold outreach email to a VP of Engineering. The tone should be direct and respectful — no hype. Lead with a specific pain point (context switching between tools) and offer a 15-min demo. Keep it under 150 words. Subject line included.",ex:"The second prompt gives Claude: role, audience, tone, structure, constraint, and format."},challenge:{task:"Transform this weak prompt into an expert-level prompt.",weak:"Help me write a resume",hints:["What role?","Experience level?","Industry?","Tone?","Achievements?"],rubric:["Specifies a target role or company","Mentions experience level or background","Defines a tone or style preference","Includes constraints (length, format, sections)","Provides real context (achievements, skills, industry)"]}}},{id:"l2",title:"The Anatomy of a Perfect Prompt",type:"framework",xp:150,content:{intro:"Every great prompt has 6 components.",framework:[{n:"Role",e:"🎭",d:"Who should Claude be?",ex:"You are a seasoned real estate attorney..."},{n:"Context",e:"📋",d:"Background info",ex:"My client is selling a property zoned C-2..."},{n:"Task",e:"🎯",d:"What to produce?",ex:"Draft a due diligence checklist..."},{n:"Format",e:"📐",d:"Output structure",ex:"Numbered checklist with categories..."},{n:"Tone",e:"🎨",d:"Voice, style, level",ex:"Professional but accessible..."},{n:"Constraints",e:"🚧",d:"Limits & requirements",ex:"Under 2 pages. No jargon..."}],challenge:{task:"Build a prompt using ALL 6 components for:\n\nPreparing for a job interview at a tech startup.",rubric:["Uses a specific Role","Provides Context","Clear Task","Output Format","Tone described","At least one Constraint"]}}},{id:"l3",title:"Iterating Like a Pro",type:"interactive",xp:150,content:{intro:"Pros never get it in one shot. They iterate.",concept:"Claude conversations are creative collaboration. First prompt = rough draft. Then sculpt.",steps:[{s:1,t:"Start Broad",d:"Initial take.",ex:"Write a landing page headline for an AI writing tool"},{s:2,t:"Redirect",d:"What worked, what didn't.",ex:"Too generic. Freelance writers. Under 8 words."},{s:3,t:"Refine",d:"Zoom in.",ex:"Swap 'revolutionize' — focus on time-saving."},{s:4,t:"Stress Test",d:"Critique own work.",ex:"Which headline stops a freelancer scrolling? Why?"}],challenge:{task:"Write a 4-message iteration loop:\n1. Opening prompt\n2. Redirect\n3. Refine\n4. Stress test\n\nTopic: Company bio for a web design studio.",rubric:["Opening gives enough context","Follow-up identifies specific change","Refines tone or detail","Stress-tests or requests alternatives"]}}}]},{id:"m2",title:"Power Tools",icon:"⚡",sub:"Files, Search & Creation",lessons:[{id:"l4",title:"Project: Client Report",type:"project",xp:300,content:{intro:"Build a polished executive summary from raw campaign data.",scenario:"3 months Google Ads: campaign, spend, impressions, clicks, conversions, revenue. CMO wants 1-page summary.",steps:[{step:1,title:"Upload & Analyze",instruction:"\"Summarize performance. Flag top 3 and bottom 3 by ROAS.\""},{step:2,title:"Generate Insights",instruction:"\"Trends in spend vs. conversion rate? Overspending on underperformers?\""},{step:3,title:"Create Report",instruction:"\"Create a Word doc: executive summary, table, insights, 3 recommendations.\""},{step:4,title:"Visualize",instruction:"\"HTML page with ROAS bar charts and spend trend line chart.\""}],skills:["File analysis","Data interpretation","DOCX creation","Visualization","Multi-step workflows"],tip:"All steps in one conversation — Claude maintains full context."}},{id:"l5",title:"Project: Competitive Research",type:"project",xp:300,content:{intro:"Competitive landscape analysis using web search and deep research.",scenario:"Launching a PM tool. Research players, pricing, positioning, gaps.",steps:[{step:1,title:"Broad Research",instruction:"\"Top 10 PM tools for software teams. Pricing, features, market, updates.\""},{step:2,title:"Deep Dive",instruction:"\"Asana vs Linear vs Monday.com: free tiers, integrations, positioning.\""},{step:3,title:"Gap Analysis",instruction:"\"3-5 underserved needs for engineering teams of 20-50.\""},{step:4,title:"Deliverable",instruction:"\"Board-ready PPTX: overview, comparison, gaps, recommendation.\""}],skills:["Web search","Deep research","Competitor analysis","PPTX creation","Strategy"],tip:"Use Deep Research for step 1."}},{id:"l6",title:"Project: Automate Reporting",type:"project",xp:250,content:{intro:"Reusable workflow with Projects — 3 hours to 15 minutes.",scenario:"Weekly: 3 spreadsheets → KPIs → anomalies → email to leadership.",steps:[{step:1,title:"Create Project",instruction:"'Weekly Ops Report' with analyst instructions."},{step:2,title:"Add Knowledge",instruction:"Upload samples + KPI definitions with thresholds."},{step:3,title:"Template Prompt",instruction:"\"Generate report. Red/yellow/green KPIs. Executive summary.\""},{step:4,title:"Refine",instruction:"Run with real data. Iterate 2-3 times."}],skills:["Projects","Knowledge files","Templates","XLSX","Automation"],tip:"Project instructions persist — Claude's standing orders."}}]},{id:"m3",title:"Connected Ecosystem",icon:"🔗",sub:"Apps & Integrations",lessons:[{id:"l7",title:"Project: Inbox Triage",type:"project",xp:300,content:{intro:"Gmail + Claude transforms email workflow.",scenario:"87 unread. Triage, draft top 5, plan the week.",steps:[{step:1,title:"Connect Gmail",instruction:"Settings → tools → connect Gmail."},{step:2,title:"Triage",instruction:"\"Categorize: Urgent, This Week, FYI, Ignore.\""},{step:3,title:"Draft",instruction:"\"Response to [sender] re [topic]. My tone, <100 words.\""},{step:4,title:"Plan",instruction:"\"Priority task list from 'This Week' emails.\""}],skills:["Gmail integration","Triage","Voice drafting","Task extraction"],tip:"User Preferences = automatic voice matching."}},{id:"l8",title:"Project: Sprint Planning",type:"project",xp:350,content:{intro:"Claude reads backlog, prioritizes, writes tickets.",scenario:"40 issues, unclear priorities, team of 5.",steps:[{step:1,title:"Connect Linear",instruction:"Tools menu → Linear."},{step:2,title:"Review",instruction:"\"Group by priority. Flag 2+ sprint items. Blocked?\""},{step:3,title:"Scope",instruction:"\"5 engineers, 2 weeks, ~6 pts/dev. Balance scope.\""},{step:4,title:"Write Tickets",instruction:"\"Auth refactor → 3-5 sub-issues with AC and points.\""}],skills:["Linear","Backlog analysis","Sprint scoping","Ticket creation"],tip:"Claude creates issues in Linear directly."}},{id:"l9",title:"Project: Browser Automation",type:"project",xp:300,content:{intro:"Claude in Chrome = AI research assistant.",scenario:"PM researching feedback across G2, Reddit, support.",steps:[{step:1,title:"Install",instruction:"Chrome Web Store → Claude in Chrome."},{step:2,title:"Research",instruction:"\"Read G2 reviews. Categorize complaints and praise.\""},{step:3,title:"Synthesize",instruction:"\"Compare to Reddit feedback. Overlapping issues?\""},{step:4,title:"Actions",instruction:"\"Prioritized improvements by frequency and impact.\""}],skills:["Chrome extension","Research","Synthesis","Cross-platform"],tip:"Also fills forms, navigates, extracts data."}}]},{id:"m4",title:"Expert Techniques",icon:"🧠",sub:"Advanced Patterns & API",lessons:[{id:"l10",title:"Chain-of-Thought Prompting",type:"interactive",xp:250,content:{intro:"Techniques prompt engineers use daily.",concept:"Chain-of-thought + system prompts = pro-level control.",demo:{bad:"Good investment? 3BR/2BA, $350K, $2,100/mo rent.",good:"Analyze step by step:\n\nProperty: 3BR/2BA, $350K, $2,100/mo\nLocation: +12% pop growth\n\n1. Gross rent multiplier\n2. Monthly expenses\n3. Net operating income\n4. Cap rate\n5. Market benchmarks\n6. Verdict + risks\n\nShow math at each step.",ex:"Step-by-step + show-work = verifiable analysis."},challenge:{task:"Write a chain-of-thought prompt for deciding between two job offers.",rubric:["Explicit step-by-step instruction","Structured evaluation criteria","Visible reasoning requested","Final synthesis or recommendation"]}}},{id:"l11",title:"Project: Build an AI App",type:"project",xp:500,content:{intro:"Capstone: build a full web application.",scenario:"Habit tracker with streaks, heatmap, AI insights.",steps:[{step:1,title:"Design",instruction:"\"Habit tracker spec: 5 habits, streaks, AI insights. Wireframes.\""},{step:2,title:"Build",instruction:"\"React app: toggles, heatmap, stats, dark mode.\""},{step:3,title:"AI Layer",instruction:"\"Insights panel via Anthropic API — patterns, correlations.\""},{step:4,title:"Ship",instruction:"\"Bug fixes, mobile, animations. Vercel deploy instructions.\""}],skills:["App design","React","API integration","Dev workflow","Deployment"],tip:"Try Claude Code for serious multi-file development."}},{id:"l12",title:"Your Claude OS",type:"interactive",xp:200,content:{intro:"Configure Claude as your personalized AI OS.",concept:"Memory + preferences + projects = persistent AI that knows you.",steps:[{s:1,t:"Preferences",d:"Define communication style in Settings."},{s:2,t:"Memory",d:"Share context: role, tools, team."},{s:3,t:"Projects",d:"One per work area with instructions."},{s:4,t:"Connect",d:"Drive, Gmail, Slack, Linear, Calendar."}],challenge:{task:"Write your User Preferences paragraph:\n- Role & industry\n- Communication style\n- Things you hate in AI responses\n- A standing instruction",rubric:["Specifies role/industry","Communication preferences","Things to avoid","Standing instruction"]}}}]}];
+const TX=ML.reduce((s,m)=>s+m.lessons.reduce((a,l)=>a+l.xp,0),0);
+const ranks=[{n:"Beginner",min:0,e:"🌱"},{n:"Apprentice",min:500,e:"🔧"},{n:"Practitioner",min:1200,e:"⚙️"},{n:"Advanced",min:2000,e:"🔥"},{n:"Expert",min:2800,e:"🧠"},{n:"Master",min:3150,e:"👑"}];
+function gR(x){let r=ranks[0];for(const k of ranks)if(x>=k.min)r=k;return r}
+function gN(x){for(const k of ranks)if(x<k.min)return k;return null}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// ═══ CHECK SERVER ═══
+fetch('/api/health').then(r=>r.json()).then(d=>{aiReady=d.grading;renderSidebar()}).catch(()=>{aiReady=false;renderSidebar()});
+
+// ═══ SERVER API CALLS ═══
+async function doGrade(lid){
+  const l=ML.flatMap(m=>m.lessons).find(x=>x.id===lid),w=S.inputs[lid]||'';
+  if(!w.trim()||w.length<20){S.tutor="Write a more detailed attempt first!";renderTutor();return}
+  if(!aiReady){S.tutor="⚠️ AI grading is not available on this server.";renderTutor();return}
+  S.grading=true;S.tutor='⏳ Reviewing<span class="thinking-dots"><span></span><span></span><span></span></span>';renderTutor();renderContent();
+  try{
+    const ch=l.content.challenge,bc=S.bonusChallenges[lid];
+    const active=bc||ch;
+    const r=await fetch('/api/grade',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({challenge_task:active.task,challenge_weak:active.weak||null,rubric:active.rubric,student_work:w})});
+    if(!r.ok)throw new Error('Server error');
+    const res=await r.json();
+    S.rubrics[lid]=res;
+    let fb=`<strong>${res.passing?'✅':'⚠️'} Score: ${res.score}/100</strong>\n\n${res.overall_feedback}`;
+    if(res.strengths?.length)fb+='\n\n'+res.strengths.map(s=>'<strong style="color:var(--gn)">💪</strong> '+s).join('\n');
+    if(res.improvements?.length)fb+='\n\n'+res.improvements.map(s=>'<strong style="color:var(--yw)">💡</strong> '+s).join('\n');
+    if(!res.passing)fb+='\n\n<strong style="color:var(--rd)">🔄 Revise — 70+ to pass!</strong>';
+    S.tutor=fb;
+  }catch(e){console.error(e);S.tutor="Grading error — try again."}
+  S.grading=false;renderAll();
+}
+async function doHelp(lid){
+  const l=ML.flatMap(m=>m.lessons).find(x=>x.id===lid),w=S.inputs[lid]||'';
+  if(!aiReady){S.tutor="⚠️ AI help unavailable.";renderTutor();return}
+  S.grading=true;S.tutor='⏳ Thinking<span class="thinking-dots"><span></span><span></span><span></span></span>';renderTutor();renderContent();
+  try{
+    const ch=l.content.challenge,bc=S.bonusChallenges[lid];
+    const active=bc||ch;
+    const r=await fetch('/api/help',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({challenge_task:active.task,challenge_weak:active.weak||null,rubric:active.rubric,student_work:w})});
+    if(!r.ok)throw new Error('Error');
+    const d=await r.json();S.tutor='💡 '+d.help;
+  }catch(e){S.tutor="Connection issue — try again."}
+  S.grading=false;renderAll();
+}
+async function genBonus(lid){
+  const l=ML.flatMap(m=>m.lessons).find(x=>x.id===lid);
+  if(!aiReady){S.tutor="⚠️ Bonus challenges require AI.";renderTutor();return}
+  S.grading=true;S.tutor='⏳ Generating a new challenge<span class="thinking-dots"><span></span><span></span><span></span></span>';renderTutor();renderContent();
+  try{
+    const modId=ML.find(m=>m.lessons.some(x=>x.id===lid))?.id;
+    const r=await fetch('/api/generate-challenge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({module_id:modId,difficulty:S.xp>1500?'advanced':S.xp>500?'intermediate':'beginner',topics_covered:Array.from(S.done).join(', ')})});
+    if(!r.ok)throw new Error('Error');
+    const d=await r.json();
+    S.bonusChallenges[lid]={task:d.task+(d.scenario?'\n\nScenario: '+d.scenario:''),weak:d.weak_prompt||null,hints:d.hints||[],rubric:d.rubric};
+    S.inputs[lid]='';S.rubrics[lid]=null;
+    S.tutor='🎲 <strong>New bonus challenge generated!</strong> This one is tailored to your current level. Give it a shot!';
+  }catch(e){S.tutor="Couldn't generate — try again."}
+  S.grading=false;renderAll();
+}
+
+// ═══ ACTIONS ═══
+function selMod(id){S.activeMod=ML.find(m=>m.id===id);S.activeLes=null;S.step=0;const msgs={m1:"Foundations is where 90% fail. Master this and everything else is easy.",m2:"Real projects from daily work. Pick one.",m3:"Gmail, Linear, Chrome — power multiplied.",m4:"Chain-of-thought, apps, your Claude OS."};S.tutor=msgs[id]||"Let's go.";renderAll()}
+function selLes(mid,lid){S.activeMod=ML.find(m=>m.id===mid);S.activeLes=S.activeMod.lessons.find(l=>l.id===lid);S.step=0;S.tutor=S.activeLes.content.challenge?"Write your attempt and <strong>Submit for Grading</strong>. Stuck? Hit <strong>Ask for Help</strong>. Done? Try a <strong>Bonus Challenge</strong>!":S.activeLes.type==='project'?"Follow each step in a real Claude conversation.":"Study the material, then tackle the challenge.";renderAll()}
+function goBack(){S.activeLes=null;S.step=0;renderAll()}
+function setStep(n){S.step=n;renderContent();document.getElementById('content').scrollTop=0}
+function togTutor(){S.tutorOpen=!S.tutorOpen;renderTutor()}
+function saveIn(k){const el=document.getElementById('si-'+k);if(el)S.inputs[k]=el.value}
+function compLes(lid){if(S.done.has(lid))return;const l=ML.flatMap(m=>m.lessons).find(x=>x.id===lid);S.done.add(lid);S.xp+=l.xp;showCeleb(l.xp);S.tutor=S.done.size===12?'🎉 <strong>Academy Complete! You are a Claude Master.</strong>':'<strong>+'+l.xp+' XP!</strong> Pick your next lesson — or try a Bonus Challenge!';renderAll()}
+function showCeleb(x){const el=document.getElementById('celebration');document.getElementById('celeb-text').textContent='🎉 +'+x+' XP earned!';el.style.display='flex';el.style.animation='none';el.offsetHeight;el.style.animation='celebA 3s ease forwards';setTimeout(()=>el.style.display='none',3100)}
+
+// ═══ RENDER ═══
+function renderAll(){renderSidebar();renderTutor();renderContent()}
+function renderTutor(){document.getElementById('tutor').innerHTML=`<button class="tutor-toggle" onclick="togTutor()">${S.tutorOpen?'▼':'▲'} Professor Claude</button>${S.tutorOpen?`<div class="tutor-body"><div class="tutor-avatar">🎓</div><div class="tutor-bubble">${S.tutor}</div></div>`:''}`}
+function renderSidebar(){const r=gR(S.xp),nx=gN(S.xp),p=nx?((S.xp-r.min)/(nx.min-r.min))*100:100;let h=`<div class="logo-area"><a href="/" style="text-decoration:none"><div class="logo">Claude Academy</div></a><div class="logo-sub">Start → Expert</div></div><div class="xp-area"><div class="rank-row"><span class="rank-badge">${r.e} ${r.n}</span>${nx?`<span class="rank-next">Next: ${nx.e} ${nx.n}</span>`:''}</div><div class="xp-track"><div class="xp-fill" style="width:${p}%"></div></div><div class="xp-label">${S.xp} / ${nx?nx.min:TX} XP</div></div><div class="mod-scroll">`;ML.forEach((m,i)=>{const dn=m.lessons.filter(l=>S.done.has(l.id)).length,isA=S.activeMod?.id===m.id;h+=`<button class="mod-btn ${isA?'active':''}" onclick="selMod('${m.id}')"><span class="mod-icon">${m.icon}</span><div class="mod-meta"><div class="mod-title">M${i+1}: ${m.title}</div><div class="mod-sub">${m.sub}</div></div><span class="mod-prog">${dn}/${m.lessons.length}</span></button>`;if(isA){h+='<div class="les-list">';m.lessons.forEach(l=>{const d=S.done.has(l.id),a=S.activeLes?.id===l.id;h+=`<button class="les-btn ${a?'active':''} ${d?'done':''}" onclick="selLes('${m.id}','${l.id}')"><span class="les-check">${d?'✅':a?'▶':'○'}</span><span style="flex:1">${l.title}</span><span class="les-xp">+${l.xp}</span></button>`});h+='</div>'}});h+=`</div><div class="sidebar-footer"><div class="stat-pill"><span class="stat-num">${S.done.size}</span><span class="stat-lbl">Lessons</span></div><div class="stat-pill"><span class="stat-num">${Math.round((S.done.size/12)*100)}%</span><span class="stat-lbl">Complete</span></div></div><div class="api-status"><span class="api-dot ${aiReady?'on':'off'}"></span>${aiReady?'AI Grading Active':'AI Grading Off'}</div>`;document.getElementById('sidebar').innerHTML=h}
+function renderContent(){const el=document.getElementById('content');if(!S.activeLes){el.innerHTML=!S.activeMod?rWelcome():rModIntro();return}el.innerHTML=S.activeLes.type==='project'?rProject(S.activeLes):rInteractive(S.activeLes)}
+function rWelcome(){return`<div class="welcome"><div class="welcome-badge">Interactive Training</div><div class="welcome-emoji">🎓</div><h1>Claude Mastery Academy</h1><p>12 lessons · 4 modules · Real projects · Live AI grading</p><p class="sub2">Select Module 1 to begin.</p><div class="wc-grid">${ML.map((m,i)=>`<button class="wc" onclick="selMod('${m.id}')"><span class="wc-icon">${m.icon}</span><span class="wc-title">M${i+1}: ${m.title}</span><span class="wc-sub">${m.lessons.length} lessons</span></button>`).join('')}</div></div>`}
+function rModIntro(){const m=S.activeMod;return`<div class="mod-intro"><div class="mod-intro-icon">${m.icon}</div><h2>${m.title}</h2><div class="mod-intro-sub">${m.sub}</div><div class="intro-les-list">${m.lessons.map(l=>`<button class="ilc" onclick="selLes('${m.id}','${l.id}')"><span class="ilc-type">${l.type==='project'?'🏗️ Project':l.type==='framework'?'📚 Framework':'⚡ Interactive'}</span><span class="ilc-title">${l.title}</span><span class="ilc-xp">${l.xp} XP${S.done.has(l.id)?' ✅':''}</span></button>`).join('')}</div></div>`}
+function rInteractive(l){const c=l.content;let h=`<div class="lesson"><div class="lesson-header"><button class="back-btn" onclick="goBack()">← Back</button><div><span class="les-type-badge">${l.type==='framework'?'📚 FRAMEWORK':'⚡ INTERACTIVE'}</span><h2>${l.title}</h2></div><span class="xp-badge">+${l.xp} XP</span></div><p class="lesson-intro">${c.intro}</p>`;if(c.concept)h+=`<div class="concept-box">${c.concept}</div>`;if(c.demo)h+=`<div class="demo-grid"><div><div class="demo-label bad">❌ WEAK PROMPT</div><pre class="demo-code">${esc(c.demo.bad)}</pre></div><div><div class="demo-label good">✅ EXPERT PROMPT</div><pre class="demo-code good">${esc(c.demo.good)}</pre></div><div class="demo-explain"><strong>Why it works:</strong> ${c.demo.ex}</div></div>`;if(c.framework)h+=`<div class="fw-grid">${c.framework.map(f=>`<div class="fw-card"><div class="fw-head"><span class="fw-emoji">${f.e}</span> ${f.n}</div><p class="fw-desc">${f.d}</p><pre class="fw-ex">"${esc(f.ex)}"</pre></div>`).join('')}</div>`;if(c.steps)h+=`<div class="timeline">${c.steps.map(t=>`<div class="tl-item"><div class="tl-dot">${t.s||t.step}</div><div class="tl-content"><div class="tl-title">${t.t||t.title}</div><p class="tl-desc">${t.d||t.desc||''}</p>${(t.ex||t.example)?`<pre class="tl-example">${esc(t.ex||t.example)}</pre>`:''}</div></div>`).join('')}</div>`;if(c.challenge)h+=rChallenge(c.challenge,l);return h+'</div>'}
+function rChallenge(ch,l){const k=l.id,bc=S.bonusChallenges[k],active=bc||ch,v=S.inputs[k]||'',res=S.rubrics[k],done=S.done.has(l.id),dis=S.grading?'disabled':'';let h=`<div class="challenge"><div class="ch-title">${bc?'🎲 Bonus Challenge':'🏋️ Your Challenge'}</div><p class="ch-task">${esc(active.task)}</p>`;if(active.weak)h+=`<div class="ch-weak">Transform: "${esc(active.weak)}"</div>`;if(active.hints?.length)h+=`<div class="hints"><strong>Hints:</strong><ul>${active.hints.map(x=>'<li>'+esc(x)+'</li>').join('')}</ul></div>`;h+=`<div class="input-area"><div class="input-label">✍️ Your Answer</div><textarea class="student-ta" id="si-${k}" placeholder="Write your prompt here..." oninput="saveIn('${k}')">${esc(v)}</textarea><div class="btn-row"><button class="submit-btn" ${dis} onclick="doGrade('${l.id}')">${S.grading?'Working...':'📝 Submit for Grading'}</button><button class="help-btn" ${dis} onclick="doHelp('${l.id}')">🆘 Help</button><button class="bonus-btn" ${dis} onclick="genBonus('${l.id}')">🎲 New Challenge</button></div></div>`;h+=`<div class="rubric-title">Grading Rubric</div><div class="rubric-list">`;active.rubric.forEach((r,i)=>{const p=res?.rubric_results?.[i],cls=res?(p?'pass':'fail'):'';h+=`<div class="rubric-item ${cls}"><span class="rub-dot ${cls}">${p===true?'✓':p===false?'✗':''}</span><span>${esc(r)}</span></div>`});h+='</div>';if(res?.passing&&!done)h+=`<button class="complete-btn" onclick="compLes('${l.id}')">🎉 Complete → +${l.xp} XP</button>`;if(done)h+=`<div class="done-tag">✅ Completed!</div>`;return h+'</div>'}
+function rProject(l){const c=l.content,cur=c.steps[S.step],done=S.done.has(l.id);let h=`<div class="lesson"><div class="lesson-header"><button class="back-btn" onclick="goBack()">← Back</button><div><span class="les-type-badge">🏗️ PROJECT</span><h2>${l.title}</h2></div><span class="xp-badge">+${l.xp} XP</span></div><p class="lesson-intro">${c.intro}</p><div class="scenario-box"><div class="scenario-label">📋 Scenario</div><p>${c.scenario}</p></div><div class="step-nav">${c.steps.map((_,i)=>`<button class="step-dot ${i===S.step?'active':''} ${i<S.step?'done':''}" onclick="setStep(${i})">${i+1}</button>`).join('')}</div><div class="step-card"><div class="step-label">Step ${cur.step}: ${cur.title}</div><p class="step-inst">${esc(cur.instruction).replace(/\n/g,'<br>')}</p><div class="try-it"><span>💡</span><span>Open Claude in another tab and try this now!</span></div></div>`;if(S.step<c.steps.length-1)h+=`<button class="next-btn" onclick="setStep(${S.step+1})">Next Step →</button>`;else{h+=`<div style="margin-bottom:14px"><div class="skills-label">Skills Practiced</div><div class="skill-tags">${c.skills.map(s=>`<span class="skill-tag">${s}</span>`).join('')}</div></div><div class="pro-tip"><strong>💎 Pro Tip:</strong> ${c.tip}</div>`;if(!done)h+=`<button class="complete-btn" onclick="compLes('${l.id}')">Complete → +${l.xp} XP</button>`;else h+=`<div class="done-tag">✅ Completed!</div>`}return h+'</div>'}
+S.tutor="Welcome! I'm <strong>Professor Claude</strong> — your live AI tutor.\n\nSubmit answers for grading, ask for help when stuck, and try <strong>🎲 New Challenge</strong> for infinite AI-generated practice.\n\nClick <strong>Module 1</strong> to begin.";renderAll();
+
+// EVENT DELEGATION FIX - handles all dynamically rendered buttons
+document.addEventListener("click", function(e) {
+  var el = e.target;
+  while (el && el !== document) {
+    var oc = el.getAttribute("onclick");
+    if (oc) {
+      e.preventDefault();
+      e.stopPropagation();
+      try { new Function(oc)(); } catch(err) { console.error("Click error:", err); }
+      return;
+    }
+    el = el.parentElement;
+  }
+});
+</script>
+</body>
+</html>
