@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt AI Academy — Team Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}
+.header{background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.08);padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:20px;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-actions{display:flex;gap:12px;align-items:center}
+.header-actions .user-name{color:#aaa;font-size:14px}
+.btn{padding:8px 16px;border-radius:8px;border:none;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#ccc}
+.btn-outline:hover{border-color:#8b5cf6;color:#a78bfa}
+.btn-accent{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}
+.btn-accent:hover{opacity:0.9}
+.container{max-width:1200px;margin:0 auto;padding:24px 32px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.stat-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px}
+.stat-card .label{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
+.stat-card .value{font-size:32px;font-weight:700;background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-card .sub{font-size:12px;color:#666;margin-top:4px}
+.section{margin-bottom:32px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-header h2{font-size:18px;font-weight:600}
+.table-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:12px 16px;font-size:12px;color:#888;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(255,255,255,0.08);font-weight:500}
+td{padding:12px 16px;font-size:14px;border-bottom:1px solid rgba(255,255,255,0.04)}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.progress-bar{width:100%;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.5s}
+.fill-low{background:#ef4444}
+.fill-mid{background:#eab308}
+.fill-high{background:#22c55e}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-green{background:rgba(34,197,94,0.15);color:#4ade80}
+.badge-yellow{background:rgba(234,179,8,0.15);color:#fbbf24}
+.badge-gray{background:rgba(255,255,255,0.08);color:#888}
+.invite-form{display:flex;gap:8px;align-items:center}
+.invite-form input{padding:8px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:14px;flex:1;max-width:300px}
+.invite-form input:focus{outline:none;border-color:#8b5cf6}
+.empty-state{text-align:center;padding:60px 20px;color:#666}
+.empty-state h3{font-size:18px;margin-bottom:8px;color:#aaa}
+.loading{text-align:center;padding:40px;color:#888}
+#invite-msg{font-size:13px;margin-left:8px}
+.leaderboard-rank{font-weight:700;color:#a78bfa}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎓 Prompt AI Academy — Team Dashboard</h1>
+  <div class="header-actions">
+    <span class="user-name" id="user-name"></span>
+    <button class="btn btn-outline" onclick="window.location.href='/academy'">Training →</button>
+    <button class="btn btn-outline" onclick="logout()">Sign Out</button>
+  </div>
+</div>
+
+<div class="container" id="main-content">
+  <div class="loading" id="loading">Loading team data...</div>
+</div>
+
+<script>
+// Auth check
+const session = localStorage.getItem('pai_session');
+const user = localStorage.getItem('pai_user');
+if (!session) { window.location.href = '/login'; }
+const sessionData = JSON.parse(session);
+const userData = user ? JSON.parse(user) : {};
+document.getElementById('user-name').textContent = userData.name || userData.email || '';
+
+function logout() {
+  localStorage.removeItem('pai_session');
+  localStorage.removeItem('pai_user');
+  window.location.href = '/login';
+}
+
+function getAuthHeaders() {
+  return { 'Authorization': 'Bearer ' + sessionData.access_token, 'Content-Type': 'application/json' };
+}
+
+async function loadDashboard() {
+  try {
+    const res = await fetch('/api/dashboard/team', { headers: getAuthHeaders() });
+    if (res.status === 401) { logout(); return; }
+    if (res.status === 403) {
+      document.getElementById('main-content').innerHTML = `
+        <div class="empty-state">
+          <h3>Supervisor Access Required</h3>
+          <p>Your account needs supervisor or admin permissions to view the team dashboard.</p>
+          <p style="margin-top:16px"><a href="/academy" style="color:#8b5cf6">← Back to Training</a></p>
+        </div>`;
+      return;
+    }
+    const data = await res.json();
+    renderDashboard(data);
+  } catch (err) {
+    document.getElementById('main-content').innerHTML = `
+      <div class="empty-state">
+        <h3>Unable to load dashboard</h3>
+        <p>${err.message}</p>
+      </div>`;
+  }
+}
+
+function renderDashboard(data) {
+  const { members, stats } = data;
+  const container = document.getElementById('main-content');
+
+  if (!members || members.length === 0) {
+    container.innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card"><div class="label">Team members</div><div class="value">0</div></div>
+      </div>
+      <div class="section">
+        <div class="section-header">
+          <h2>Invite Team Members</h2>
+        </div>
+        <div class="invite-form">
+          <input type="email" id="invite-email" placeholder="colleague@company.com">
+          <button class="btn btn-accent" onclick="inviteMember()">Invite</button>
+          <span id="invite-msg"></span>
+        </div>
+      </div>
+      <div class="empty-state">
+        <h3>No team members yet</h3>
+        <p>Invite your team to get started with AI training.</p>
+      </div>`;
+    return;
+  }
+
+  // Sort by completion for leaderboard
+  const sorted = [...members].sort((a, b) => b.completion_pct - a.completion_pct || b.avg_score - a.avg_score);
+
+  container.innerHTML = `
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">Team Members</div>
+        <div class="value">${stats.total_members}</div>
+        <div class="sub">${stats.fully_completed} fully completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Avg Completion</div>
+        <div class="value">${stats.avg_completion}%</div>
+        <div class="sub">across all members</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Avg Score</div>
+        <div class="value">${stats.avg_score}</div>
+        <div class="sub">out of 100</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Total Training Time</div>
+        <div class="value">${stats.total_time_hours}h</div>
+        <div class="sub">invested by team</div>
+      </div>
+    </div>
+
+    <!-- Team Progress Table -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Team Progress</h2>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline" onclick="exportCSV()">📥 Export CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Progress</th>
+              <th>Avg Score</th>
+              <th>Time Spent</th>
+              <th>XP</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sorted.map((m, i) => {
+              const fillClass = m.completion_pct >= 70 ? 'fill-high' : m.completion_pct >= 30 ? 'fill-mid' : 'fill-low';
+              const statusBadge = m.completion_pct === 100 ? '<span class="badge badge-green">Completed</span>'
+                : m.completion_pct > 0 ? '<span class="badge badge-yellow">In Progress</span>'
+                : '<span class="badge badge-gray">Not Started</span>';
+              const timeStr = m.total_time_minutes >= 60
+                ? Math.floor(m.total_time_minutes/60) + 'h ' + (m.total_time_minutes%60) + 'm'
+                : m.total_time_minutes + 'm';
+              return `<tr>
+                <td><span class="leaderboard-rank">#${i+1}</span></td>
+                <td><strong>${m.name}</strong></td>
+                <td style="color:#888">${m.email}</td>
+                <td style="min-width:140px">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div class="progress-bar" style="flex:1"><div class="progress-fill ${fillClass}" style="width:${m.completion_pct}%"></div></div>
+                    <span style="font-size:12px;color:#aaa;min-width:55px">${m.completed_lessons}/${m.total_lessons}</span>
+                  </div>
+                </td>
+                <td><strong>${m.avg_score}</strong>/100</td>
+                <td>${timeStr}</td>
+                <td>${m.xp || 0} XP</td>
+                <td>${statusBadge}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Invite Members -->
+    <div class="section">
+      <div class="section-header">
+        <h2>Invite Team Members</h2>
+      </div>
+      <div class="invite-form">
+        <input type="email" id="invite-email" placeholder="colleague@company.com">
+        <button class="btn btn-accent" onclick="inviteMember()">Invite</button>
+        <span id="invite-msg"></span>
+      </div>
+    </div>
+  `;
+}
+
+async function inviteMember() {
+  const email = document.getElementById('invite-email').value;
+  if (!email) return;
+  const msgEl = document.getElementById('invite-msg');
+  try {
+    const res = await fetch('/api/dashboard/invite', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      msgEl.style.color = '#4ade80';
+      msgEl.textContent = data.message;
+      document.getElementById('invite-email').value = '';
+    } else {
+      msgEl.style.color = '#f87171';
+      msgEl.textContent = data.error;
+    }
+  } catch (err) {
+    msgEl.style.color = '#f87171';
+    msgEl.textContent = 'Failed to send invite.';
+  }
+}
+
+async function exportCSV() {
+  try {
+    const res = await fetch('/api/dashboard/export', { headers: getAuthHeaders() });
+    if (!res.ok) { alert('Export failed.'); return; }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'team-progress.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert('Export failed: ' + err.message);
+  }
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
