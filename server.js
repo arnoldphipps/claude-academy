@@ -83,7 +83,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     grading: !!ANTHROPIC_API_KEY,
     database: !!supabase,
-    version: '2.3.1'
+    version: '2.4.0'
   });
 });
 
@@ -250,6 +250,67 @@ app.get('/api/badges', authMiddleware, async (req, res) => {
     });
   } catch (err) {
     res.json({ earned: [], available: [] });
+  }
+});
+
+
+// ========================================
+// COMPLETION CERTIFICATES
+// ========================================
+app.get('/api/certificate/:moduleId', authMiddleware, async (req, res) => {
+  const { moduleId } = req.params;
+  try {
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', req.user.id).single();
+    const { data: progress } = await supabase.from('progress').select('*').eq('user_id', req.user.id);
+    const { data: grades } = await supabase.from('grades').select('*').eq('user_id', req.user.id);
+
+    // Module definitions
+    const modules = {
+      'foundations': { name: 'Module 1: Foundations', lessons: ['m1-intro','m1-anatomy','m1-iteration'], fullName: 'Prompt Engineering Foundations' },
+      'power-tools': { name: 'Module 2: Power Tools', lessons: ['m2-report','m2-research','m2-automate'], fullName: 'Power Tools & Real Projects' },
+      'connected': { name: 'Module 3: Connected Ecosystem', lessons: ['m3-inbox','m3-sprint','m3-browser'], fullName: 'Connected Ecosystem & Integrations' },
+      'expert': { name: 'Module 4: Expert Techniques', lessons: ['m4-chain','m4-app','m4-os'], fullName: 'Expert Techniques & AI Mastery' },
+      'all': { name: 'Claude Mastery', lessons: null, fullName: 'Claude Mastery — Complete Course' }
+    };
+
+    const mod = modules[moduleId];
+    if (!mod) return res.status(404).json({ error: 'Module not found.' });
+
+    // Check completion
+    const completedLessons = (progress || []).filter(p => p.status === 'completed').map(p => p.lesson_id);
+    const requiredLessons = mod.lessons || Object.values(modules).filter(m => m.lessons).flatMap(m => m.lessons);
+    const allDone = requiredLessons.every(l => completedLessons.includes(l));
+
+    if (!allDone) {
+      return res.json({ earned: false, completed: completedLessons.length, required: requiredLessons.length });
+    }
+
+    // Calculate scores for completed lessons
+    const bestByLesson = {};
+    (grades || []).forEach(g => {
+      if (!bestByLesson[g.lesson_id] || g.score > bestByLesson[g.lesson_id]) bestByLesson[g.lesson_id] = g.score;
+    });
+    const relevantScores = requiredLessons.map(l => bestByLesson[l] || 0).filter(s => s > 0);
+    const avgScore = relevantScores.length > 0 ? Math.round(relevantScores.reduce((s,v) => s+v, 0) / relevantScores.length) : 0;
+
+    // Generate certificate ID
+    const certId = Buffer.from(`${req.user.id}-${moduleId}-${Date.now()}`).toString('base64url').substring(0, 16);
+
+    res.json({
+      earned: true,
+      certificate: {
+        id: certId,
+        studentName: profile?.name || 'Student',
+        moduleName: mod.fullName,
+        avgScore,
+        lessonsCompleted: requiredLessons.length,
+        completedAt: new Date().toISOString(),
+        shareUrl: `https://www.promptaiacademy.com/certificate?id=${certId}&name=${encodeURIComponent(profile?.name || 'Student')}&module=${encodeURIComponent(mod.fullName)}&score=${avgScore}&date=${new Date().toISOString().split('T')[0]}`
+      }
+    });
+  } catch (err) {
+    console.error('Certificate error:', err);
+    res.status(500).json({ error: 'Failed to generate certificate.' });
   }
 });
 
@@ -938,6 +999,9 @@ app.post('/api/generate-challenge', apiLimiter, async (req, res) => {
 // ========================================
 app.get('/academy', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'academy.html'));
+});
+app.get('/certificate', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'certificate.html'));
 });
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
