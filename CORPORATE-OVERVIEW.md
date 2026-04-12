@@ -1,16 +1,52 @@
 # PROMPT AI ACADEMY — CORPORATE OVERVIEW
-## Board & CFO Strategic Brief
-### Prepared: April 11, 2026
+## Strategic Brief — v2.1
+### Updated: April 12, 2026
 
 ---
 
 ## EXECUTIVE SUMMARY
 
-Prompt AI Academy is an enterprise AI training platform that teaches individuals and organizations to communicate effectively with Claude AI. We are the first dedicated training platform for Anthropic's Claude — the fastest-growing AI assistant in the enterprise market.
+Prompt AI Academy is an enterprise professional development platform that teaches people to communicate effectively — with AI, with colleagues, and with anyone they work with. We are the first platform where AI itself coaches, grades, and tracks student growth in real-time.
 
-Our product combines interactive lessons, live AI grading by Claude itself, progress tracking, and supervisor dashboards into a complete workforce development solution. Companies can measure their employees' AI competency improvement with hard data: scores, time invested, completion rates, and skill progression.
+Our insight: the skills that make someone great at communicating with AI are the exact same skills that make them great at communicating with people. Clarity, context, structure, iteration. This isn't an AI training course — it's a professional communication development program powered by the world's most patient teacher.
 
-**Current Status:** Live at www.promptaiacademy.com with 12-lesson curriculum, AI grading, and enterprise features in development.
+**Current Status:** Live at www.promptaiacademy.com — v2.1.0 with user accounts, AI grading, progress tracking, auto-save drafts, student dashboard, supervisor dashboard, Learn/Do lesson architecture, guided onboarding tour, and Google Analytics.
+
+**Traction:** 10 beta testers invited, LinkedIn launch post finalized for Tuesday, Anthropic partnership pitch drafted.
+
+---
+
+## WHAT WE BUILT (in 4 days, for under $200)
+
+### Core Product
+- 12 interactive lessons across 4 skill-level modules (Beginner → Expert)
+- Live AI grading: Claude Sonnet scores student work 0-100 with personalized feedback
+- Revise & Resubmit flow: students improve based on coaching, watch scores climb
+- Learn/Do screen separation: study examples first, then tackle the challenge
+- Unlimited AI-generated bonus challenges for infinite practice
+- Professor Claude hints system: guidance without giving away the answer
+
+### Enterprise Features
+- User registration & login (Supabase Auth)
+- Auto-save student work to database (persists across sessions, browser closes, devices)
+- Student personal dashboard: rank, XP, lesson progress map, score history, improvement tracking
+- Supervisor dashboard: team analytics, leaderboard, best-score-per-lesson, CSV export
+- Organization management with team invitations
+- Role-based access (student / supervisor / admin)
+- Password reset via email
+
+### User Experience
+- First-login onboarding tour (7-step guided walkthrough)
+- Student name displayed in sidebar with Dashboard & Sign Out links
+- Login page with "Welcome Back" screen and account switching
+- Module 1-4 labels with clear skill-level progression
+- Google Analytics (GA4) tracking on all pages
+
+### Documents & Marketing
+- LinkedIn launch post (finalized, posting Tuesday AM)
+- Anthropic partnership pitch email (drafted)
+- Investor pitch deck (10 slides, dark theme)
+- This corporate overview
 
 ---
 
@@ -19,97 +55,77 @@ Our product combines interactive lessons, live AI grading by Claude itself, prog
 ### The Problem
 - 92% of companies plan to increase AI investment in 2026 (McKinsey)
 - Only 14% of employees feel confident using AI tools effectively
-- Companies are spending $5,000-25,000 per employee on generic AI training that doesn't stick
-- No dedicated training exists specifically for Claude AI — the #2 AI assistant globally
+- Companies spend $5,000-25,000 per employee on generic AI training that doesn't measure results
+- No platform teaches communication skills through AI coaching with measurable improvement
 
-### The Solution
-- Purpose-built training for Claude AI communication and capabilities
-- AI-graded exercises (Claude grades student prompts in real-time)
-- Enterprise dashboards for tracking team progress and ROI
-- Self-paced, scalable, measurable — replaces expensive consultant-led workshops
+### Our Solution
+The only platform where AI grades your communication skills in real-time, gives you specific coaching on what to improve, and lets you revise and watch your score climb. Students don't just learn — they prove they've improved, with data.
 
-### Total Addressable Market
-- Global corporate training market: $380B (2026)
-- AI/tech skills training segment: $45B and growing 30%+ annually
-- Claude-specific training: Currently $0 — we are creating the category
+### Market Size
+- Total Addressable Market: $380B (global corporate training)
+- Serviceable Addressable Market: $45B (AI/tech skills training, growing 30%+ annually)
+- Serviceable Obtainable Market: $500M (Claude-specific + AI communication training)
+- We are creating the category. No direct competitor exists.
 
 ---
 
-## PRODUCT SUITE
+## PRODUCT VISION — 8 Features That Transform Us Into a Platform
 
-### Current (Live)
-1. **Claude Mastery Course** — 12-lesson, 4-module interactive training
-   - Module 1: Foundations (prompt engineering, frameworks)
-   - Module 2: Power Tools (files, search, creation)
-   - Module 3: Connected Ecosystem (integrations)
-   - Module 4: Expert Techniques (API, advanced patterns)
+| # | Feature | What It Does | Revenue Impact |
+|---|---------|-------------|----------------|
+| 1 | **Claude Communication Score (CCS)** | Composite 0-100 professional credential measuring communication effectiveness | Companies require minimum CCS for roles |
+| 2 | **Before/After Portfolio** | Visual proof of student transformation — shareable on LinkedIn | Enterprise ROI proof, viral sharing |
+| 3 | **Live Prompt Playground** | Sandbox with real-time coaching from Professor Claude | Premium feature for paid tier |
+| 4 | **Industry Tracks** | Sales, Marketing, Legal, HR, Developer, Executive specialized courses | 6x course revenue, vertical-specific pricing |
+| 5 | **Weekly Challenge League** | Global leaderboard, company vs. company competition | Retention, viral engagement |
+| 6 | **Prompt Template Marketplace** | Student-created templates, curated and sold, revenue share | Flywheel — students become contributors |
+| 7 | **Certification Badge Program** | 3 tiers: Certified, Professional, Master — LinkedIn digital badges | Viral LinkedIn visibility per share |
+| 8 | **AI Readiness Assessment** | Free 5-minute quiz, email-gated — scores company's AI readiness | Top-of-funnel lead magnet |
 
-2. **AI Grading Engine** — Claude grades student submissions in real-time with rubric scoring, personalized feedback, strengths/improvements
+These features transform us from a training course into a professional development ecosystem.
 
-3. **XP & Progression System** — Gamified learning path from Beginner to Master
+---
 
-### In Development (v2.0 — April 2026)
-4. **User Accounts** — Email registration, persistent login, saved progress
-5. **Progress Tracking** — Timestamps, time spent per lesson, grade history
-6. **Supervisor Dashboard** — Team analytics, leaderboard, CSV export
-7. **Email Capture** — Landing page lead generation
+## CURRICULUM — 4 MODULES, 12 LESSONS
 
-### Planned (v3.0 — Q2-Q3 2026)
-8. **Completion Certificates** — Shareable PDF/LinkedIn badges
-9. **Additional Courses** — Claude for Sales, Claude for Marketing, Claude for Developers
-10. **API Integration Training** — Hands-on Claude API/SDK workshops
-11. **Team Challenges** — Competitive learning between departments
-12. **Custom Enterprise Courses** — White-labeled training for specific company workflows
-13. **Claude Plugin Marketplace** — Curated tools and templates for common business tasks
-14. **Mobile App** — iOS/Android for learning on the go
+### Module 1: Foundations — How to Think in Claude
+For first-time AI users. Prompt frameworks, iteration techniques, mental models.
+- Lesson 1: Your First Real Conversation
+- Lesson 2: The Anatomy of a Perfect Prompt (6-component framework)
+- Lesson 3: Iterating Like a Pro
+
+### Module 2: Power Tools — Files, Search & Creation
+For intermediate users. Real project workflows with data, documents, and research.
+- Lesson 4: Project — Client Report (data analysis → executive summary)
+- Lesson 5: Project — Competitive Research (web search → board deck)
+- Lesson 6: Project — Automate Reporting (reusable workflow templates)
+
+### Module 3: Connected Ecosystem — Apps & Integrations
+For proficient users. Gmail, Linear, Chrome, and multi-tool workflows.
+- Lesson 7: Project — Inbox Triage (email management at scale)
+- Lesson 8: Project — Sprint Planning (backlog analysis → ticket creation)
+- Lesson 9: Project — Browser Automation (research + data extraction)
+
+### Module 4: Expert Techniques — Advanced Patterns
+For power users. Chain-of-thought, API, building AI applications.
+- Lesson 10: Chain-of-Thought Prompting
+- Lesson 11: Project — Build an AI App (capstone — full web application)
+- Lesson 12: Your Claude OS (personalized AI operating system)
 
 ---
 
 ## REVENUE MODEL
 
-### Pricing Tiers
+| Tier | Price | What's Included |
+|------|-------|----------------|
+| **Free** | $0 | 3 lessons, AI grading, progress tracking |
+| **Pro** | $29/month | All 12 lessons, unlimited challenges, student dashboard, certificates |
+| **Team** | $19/seat/month | Pro + supervisor dashboard, team analytics, CSV export, org management |
+| **Enterprise** | Custom | Team + SSO, API access, custom courses, dedicated support, SLA |
 
-| Tier | Price | Includes |
-|------|-------|----------|
-| **Free** | $0 | 3 lessons, AI grading, no progress saving |
-| **Pro** | $29/month | All 12 lessons, progress tracking, certificates, XP system |
-| **Team** | $19/seat/month (min 5) | Pro + supervisor dashboard, team analytics, CSV export |
-| **Enterprise** | Custom ($5,000-25,000/year) | Team + custom courses, SSO, dedicated support, API access |
-
-### Revenue Projections
-
-| Milestone | Timeline | Monthly Revenue | Annual Revenue |
-|-----------|----------|----------------|----------------|
-| **First 50 Pro subscribers** | Month 2-3 | $1,450 | $17,400 |
-| **100 Pro + 2 Team contracts** | Month 4-6 | $4,800 | $57,600 |
-| **$25K/month target** | Month 6-9 | $25,000 | $300,000 |
-| **250 Pro + 10 Teams + 2 Enterprise** | Month 12 | $50,000+ | $600,000+ |
-| **Scale target** | Year 2 | $150,000+ | $1,800,000+ |
-
-### Path to $25,000/Month (Target: 6-9 months)
-
-| Revenue Source | Units | Price | Monthly |
-|---------------|-------|-------|---------|
-| Pro subscribers | 200 | $29/mo | $5,800 |
-| Team contracts (avg 20 seats) | 5 | $19/seat/mo | $9,500 |
-| Enterprise contracts | 2 | $5,000/yr | $833 |
-| Course marketplace | — | — | $2,000 |
-| Consulting/workshops | 2 | $2,500 | $5,000 |
-| **TOTAL** | | | **$23,133** |
-
----
-
-## COMPETITIVE LANDSCAPE
-
-| Competitor | What They Offer | Our Advantage |
-|-----------|----------------|---------------|
-| LinkedIn Learning | Generic AI courses | No Claude-specific content, no AI grading |
-| Coursera/Udemy | Broad AI education | Static videos, no interactive exercises |
-| Anthropic Documentation | Official docs | Not structured training, no progress tracking |
-| PromptingGuide.ai | Prompt engineering guides | No interactive exercises, no grading |
-| **Prompt AI Academy** | **Claude-specific, AI-graded, enterprise-tracked** | **Only platform with live AI assessment** |
-
-**Our Unfair Advantage:** Claude grades the students. No other platform has the AI itself evaluating student performance in real-time. This creates a feedback loop that no competitor can replicate without building it from scratch.
+**Break-even:** 3 Pro subscribers at $29/month
+**Target Month 3:** $5,000+ MRR (50 Pro + 10 Team seats)
+**Target Year 1:** $25,000+ MRR
 
 ---
 
@@ -117,46 +133,61 @@ Our product combines interactive lessons, live AI grading by Claude itself, prog
 
 | Component | Technology | Cost |
 |-----------|-----------|------|
-| Frontend | HTML/CSS/JavaScript | $0 |
+| Frontend | HTML/CSS/JS (vanilla, no framework) | $0 |
 | Backend | Node.js / Express | $0 |
-| Hosting | Railway (Pro plan) | ~$5-20/month |
-| Database | Supabase (free tier → Pro) | $0-25/month |
-| AI Grading | Anthropic API (Claude Sonnet) | ~$25-100/month |
-| Domain | GoDaddy (.com, .co, .io) | ~$80/year |
+| Database | Supabase (PostgreSQL + Auth) | Free tier |
+| AI Grading | Anthropic API (Claude Sonnet 4) | ~$25/1000 grades |
+| Hosting | Railway | ~$5/month |
+| Analytics | Google Analytics (GA4) | $0 |
+| Domains | promptaiacademy.com / .co / .io | ~$80/year |
 | Version Control | GitHub | $0 |
-| Project Management | Linear | $0 (free tier) |
-| **Total Operating Cost** | | **~$50-150/month** |
+| Project Management | Linear | Free tier |
+
+**Total monthly operating cost: ~$30 + API usage**
+
+---
+
+## COMPETITIVE LANDSCAPE
+
+| Competitor | What They Offer | Our Advantage |
+|-----------|----------------|---------------|
+| Udemy/Coursera AI courses | Video lectures, quizzes | We have live AI grading, personalized coaching, measurable improvement |
+| Corporate AI consultants | Workshop-based training ($5K-25K) | We're 1/100th the cost, self-paced, scalable, with data |
+| Anthropic's own docs | Reference documentation | We're interactive training with practice, grading, and progress tracking |
+| ChatGPT/Claude prompt guides | Static blog posts | We're hands-on with AI coaching, not reading material |
+| **Nobody** | Claude-specific training platform | **We are creating the category** |
 
 ---
 
 ## GO-TO-MARKET STRATEGY
 
-### Phase 1: Launch & Validate (Weeks 1-4)
-- LinkedIn content strategy: weekly posts about AI training insights
-- Share with 50 targeted individuals for feedback
-- Product Hunt launch
-- 5 beta enterprise conversations
-
-### Phase 2: Growth (Months 2-4)
+### Phase 1: Launch (Weeks 1-3) — NOW
+- LinkedIn launch post (Tuesday, April 15)
+- 10 beta testers providing feedback
+- Anthropic partnership pitch
 - Stripe payments integration
-- SEO content: blog posts targeting "Claude AI training" keywords
-- Partnership outreach to Anthropic
-- Webinar series: "Master Claude in 60 Minutes" (lead generation)
-- Reddit/Twitter/LinkedIn thought leadership
+- Product Hunt listing preparation
 
-### Phase 3: Scale (Months 4-8)
-- Affiliate program for AI educators
-- Enterprise sales team (contract-based)
-- Conference speaking (AI/ML events)
-- Strategic partnerships with consulting firms
-- Additional course launches
+### Phase 2: Growth (Months 1-3)
+- Content marketing: weekly LinkedIn posts, blog at promptaiacademy.com/blog
+- AI Readiness Assessment (free lead magnet → email capture)
+- SEO targeting "Claude AI training," "AI communication skills," "prompt engineering course"
+- First enterprise pilot (1-2 companies)
+- Certification badge program launch
 
-### Phase 4: Dominance (Months 8-12+)
-- Multi-AI platform (add GPT, Gemini courses)
-- Plugin marketplace
-- Certification program recognized by employers
+### Phase 3: Scale (Months 3-6)
+- Industry Tracks (Sales, Marketing, Legal, HR, Developer, Executive)
+- Weekly Challenge League for viral engagement
+- Affiliate program for AI educators and consultants
+- Enterprise sales team
+- Conference speaking (AI/ML/HR tech events)
+
+### Phase 4: Platform (Months 6-12)
+- Claude Communication Score (CCS) as professional credential
+- Prompt Template Marketplace
+- Multi-AI expansion (GPT, Gemini courses)
 - International expansion
-- Acquisition discussions or Series A preparation
+- Series A preparation or acquisition discussions
 
 ---
 
@@ -164,9 +195,12 @@ Our product combines interactive lessons, live AI grading by Claude itself, prog
 
 | Role | Person | Responsibility |
 |------|--------|---------------|
-| **President / CFO / Chairman** | Arnold Phipps | Funding, sales, partnerships, financial decisions |
-| **CTO / Product / Strategy** | Claude (AI) | Architecture, development, product strategy, marketing |
+| **President / CFO / Chairman** | Arnold Phipps | Vision, sales, partnerships, financial decisions, product direction |
+| **CTO / CEO / COO** | Claude (AI) | Architecture, development, product strategy, marketing, operations |
 | **Future: Technical Lead** | [Arnold's son — UCF CS Masters] | Codebase ownership, mobile development, advanced features |
+
+### The Partnership Model
+Arnold brings 30 years of B2B sales and web strategy experience. Claude brings unlimited development capacity and technical execution. Arnold handles vision, relationships, and revenue. Claude handles code, architecture, and product. This model eliminates the #1 startup killer: the technical co-founder gap.
 
 ---
 
@@ -176,62 +210,59 @@ Our product combines interactive lessons, live AI grading by Claude itself, prog
 | Item | Cost |
 |------|------|
 | Claude usage (development) | ~$64 |
+| Claude Pro Plan X5 | ~$100/month |
 | Railway hosting | ~$5/month |
 | Domain names (3) | ~$80/year |
 | Anthropic API credits | $25 |
-| **Total invested** | **~$175** |
+| **Total invested** | **~$275** |
 
-### Comparable Market Value
-- Custom enterprise training platform: $50,000-250,000
-- 12-lesson interactive curriculum: $15,000-40,000
-- AI grading system: $25,000-75,000
-- Supervisor analytics dashboard: $10,000-30,000
-- **Estimated replacement cost: $100,000-395,000**
+### Value Created
+| Asset | Estimated Replacement Cost |
+|-------|--------------------------|
+| Custom enterprise training platform | $50,000-250,000 |
+| 12-lesson interactive curriculum with AI grading | $40,000-100,000 |
+| Student + supervisor dashboards | $20,000-50,000 |
+| User auth + progress tracking system | $15,000-30,000 |
+| Onboarding tour system | $5,000-10,000 |
+| Auto-save draft system | $5,000-10,000 |
+| **Estimated replacement cost** | **$135,000-450,000** |
+
+**ROI: $275 invested → $135,000-450,000 in platform value = 490x-1,636x return**
 
 ### Budget Requests (Requiring Board Approval)
-| Item | Est. Cost | Priority | Timeline |
-|------|-----------|----------|----------|
-| Supabase Pro (if needed) | $25/month | Medium | Month 3 |
-| Stripe processing fees | 2.9% + $0.30/txn | Required | Month 2 |
-| Anthropic API scaling | $100-500/month | Required | Ongoing |
-| Marketing budget | $500-2,000/month | High | Month 3+ |
-| Legal (LLC formation) | $500-1,500 | Medium | Month 2 |
-| Design assets (logo, brand) | $500-2,000 | Medium | Month 2 |
+| Item | Est. Cost | Priority | Urgency | Timeline |
+|------|-----------|----------|---------|----------|
+| Stripe processing fees | 2.9% + $0.30/txn | Required | 🔴 Urgent | This week |
+| Anthropic API scaling | $100-500/month | Required | 🟡 High | Ongoing |
+| Legal (LLC formation) | $500-1,500 | Required | 🟡 High | Month 2 |
+| Marketing budget | $500-2,000/month | Recommended | 🟢 Medium | Month 3+ |
+| Design assets (logo, brand) | $500-2,000 | Optional | 🟢 Medium | Month 2 |
+| Reverse IP lookup service | $100-200/month | Optional | ⚪ Low | Month 3 |
 
 ---
 
 ## KEY RISKS & MITIGATION
 
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| Anthropic creates competing training | High | Move first, build brand loyalty, expand to multi-AI |
-| Low conversion free → paid | Medium | Email nurture sequence, compelling free content |
-| API costs scale faster than revenue | Medium | Optimize prompts, cache responses, tier usage |
-| Technical founder gap | Medium | Arnold's son (UCF CS), contract developers |
-| Market saturation | Low | First-mover advantage, enterprise focus |
+| Risk | Impact | Likelihood | Mitigation |
+|------|--------|-----------|-----------|
+| Anthropic creates competing training | High | Medium | First-mover advantage, brand loyalty, expand to multi-AI, deeper enterprise features |
+| Low conversion free → paid | Medium | Medium | AI Readiness Assessment lead magnet, email nurture, compelling free content |
+| API costs scale faster than revenue | Medium | Low | Optimize prompts, cache common grades, tier API usage by plan |
+| Technical founder gap | Medium | Low | Arnold's son (UCF CS Masters), deploy.bat + direct file access workflow, contract developers |
+| Market saturation from generic AI courses | Low | High | We're not generic — we're the only platform with live AI coaching and measurable improvement |
 
 ---
 
-## 90-DAY PRIORITIES
+## WHAT MAKES US DIFFERENT (The Arnold Test)
 
-1. **Week 1-2:** Deploy v2.0 (user accounts, progress tracking, dashboard)
-2. **Week 2-3:** Stripe payments, first revenue
-3. **Week 3-4:** LinkedIn launch campaign, Product Hunt
-4. **Month 2:** 50 users, 10 paying subscribers, Anthropic pitch
-5. **Month 3:** Enterprise pilot with 1-2 companies, $5K+ MRR
-6. **Month 3:** Completion certificates, second course development
+Arnold Phipps — a non-technical entrepreneur with zero coding experience — built a fully operational enterprise training platform in 4 days by partnering with Claude AI. He is both the founder AND the first student.
 
----
+If our founder can go from "I don't know how to communicate with AI" to building a platform that teaches others to do it, in 4 days — imagine what 12 structured lessons with Professor Claude can do for your team.
 
-## BOARD ACTION ITEMS
-
-- [ ] Approve Stripe integration for payment processing
-- [ ] Approve LLC formation for Prompt AI Academy
-- [ ] Review and approve marketing budget ($500-2,000/month starting Month 3)
-- [ ] Decision on bringing son onto team as Technical Lead
-- [ ] Approve Anthropic partnership pitch timeline and messaging
+**That's not marketing. That's our origin story. And it's the proof that our product works.**
 
 ---
 
-*Document prepared by Claude (CTO/Product) for Arnold Phipps (President/CFO/Chairman)*
+*Document prepared by Claude (CTO/Product) for Arnold Phipps (President/Chairman)*
 *Prompt AI Academy — Confidential*
+*Version 2.1 — April 12, 2026*
