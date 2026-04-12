@@ -91,17 +91,49 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div class="guest-link">
       <a href="/academy">Continue as Guest →</a>
     </div>
+
+    <!-- WELCOME BACK (shown when already logged in) -->
+    <div id="welcome-back" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:36px;margin-bottom:12px">👋</div>
+      <h3 style="font-size:18px;margin-bottom:4px">Welcome back!</h3>
+      <p id="wb-name" style="color:#888;margin-bottom:20px"></p>
+      <button class="btn-primary" onclick="window.location.href='/academy'" style="width:100%;margin-bottom:12px">Continue as <span id="wb-name2"></span> →</button>
+      <button onclick="switchUser()" style="width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.15);color:#aaa;border-radius:8px;font-size:14px;cursor:pointer">Sign in as a different user</button>
+    </div>
   </div>
 </div>
 
 <script>
-// Check if already logged in
+// Check if already logged in — show choice instead of auto-redirect
 const session = localStorage.getItem('pai_session');
+const existingUser = localStorage.getItem('pai_user');
 if (session) {
   try {
     const s = JSON.parse(session);
-    if (s.access_token) window.location.href = '/academy';
+    if (s.access_token) {
+      // Show welcome back instead of auto-redirecting
+      const name = existingUser ? JSON.parse(existingUser).name || JSON.parse(existingUser).email : 'your account';
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'none';
+      document.querySelector('.divider').style.display = 'none';
+      document.querySelector('.guest-link').style.display = 'none';
+      document.querySelector('.tabs').style.display = 'none';
+      document.getElementById('welcome-back').style.display = 'block';
+      document.getElementById('wb-name').textContent = name;
+      document.getElementById('wb-name2').textContent = name;
+    }
   } catch(e) { localStorage.removeItem('pai_session'); }
+}
+
+function switchUser() {
+  localStorage.removeItem('pai_session');
+  localStorage.removeItem('pai_user');
+  document.getElementById('welcome-back').style.display = 'none';
+  document.getElementById('login-form').style.display = 'block';
+  document.querySelector('.divider').style.display = 'block';
+  document.querySelector('.guest-link').style.display = 'block';
+  document.querySelector('.tabs').style.display = 'flex';
+  document.querySelectorAll('.tab')[0].classList.add('active');
 }
 
 function showTab(tab) {
