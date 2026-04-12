@@ -160,6 +160,18 @@ button{font-family:inherit;cursor:pointer}button:active{transform:scale(.98)}
 @keyframes celebA{0%{opacity:0;transform:translateY(-30px) scale(.9)}12%{opacity:1;transform:translateY(0) scale(1)}70%{opacity:1}100%{opacity:0;transform:translateY(-15px)}}
 @media(max-width:900px){.sidebar{width:240px;min-width:240px}.content{padding:24px 20px}.demo-grid,.fw-grid{grid-template-columns:1fr}.wc-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.sidebar{display:none}.content{padding:16px}}
+.tour-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10000;pointer-events:none}
+.tour-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:9999;transition:opacity 0.3s}
+.tour-spotlight{position:absolute;border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,0.75);z-index:10000;transition:all 0.4s ease;pointer-events:none}
+.tour-card{position:absolute;z-index:10001;background:var(--sf);border:1px solid var(--ac);border-radius:12px;padding:20px 24px;max-width:360px;box-shadow:0 8px 40px rgba(79,156,247,0.25);pointer-events:all;animation:fadeUp 0.3s ease}
+.tour-card h3{font-size:16px;font-weight:800;margin-bottom:8px;color:var(--ac)}
+.tour-card p{font-size:13px;line-height:1.65;color:var(--tx2);margin-bottom:16px}
+.tour-step-indicator{font-size:11px;color:var(--dm);margin-bottom:6px}
+.tour-btns{display:flex;gap:8px;justify-content:space-between}
+.tour-btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.tour-btn-next{background:var(--ac2);color:#fff}.tour-btn-next:hover{background:var(--ac)}
+.tour-btn-back{background:none;border:1px solid var(--bd);color:var(--mt)}.tour-btn-back:hover{border-color:var(--mt)}
+.tour-btn-skip{background:none;border:none;color:var(--dm);font-size:12px;cursor:pointer;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -279,6 +291,52 @@ document.addEventListener("click", function(e) {
     el = el.parentElement;
   }
 });
+
+// ═══ ONBOARDING TOUR ═══
+const tourSteps=[
+{title:'Welcome to Prompt AI Academy! 🎓',text:'Let\'s take a quick tour so you know exactly how everything works. This takes about 30 seconds.',target:null,position:'center'},
+{title:'Choose Your Module',text:'Start here — pick a module from the sidebar. Module 1 is for beginners, Module 4 is for experts. Each module has 3 lessons.',target:'.mod-scroll',position:'right'},
+{title:'Your Name & Progress',text:'Your name, rank, and XP progress bar are shown here. As you complete lessons and earn high scores, you\'ll rank up from Beginner to Master.',target:'.xp-area',position:'right'},
+{title:'Dashboard & Sign Out',text:'Quick links to your personal dashboard (track all your scores and progress) and sign out. Your dashboard is where you see your growth over time.',target:'.sidebar-footer',position:'right'},
+{title:'Professor Claude — Your AI Tutor',text:'Professor Claude guides you through every lesson. Tips, encouragement, and feedback appear here. Click to expand or collapse.',target:'.tutor',position:'bottom'},
+{title:'Learn First, Then Practice',text:'Each lesson has two phases: 📖 Learn (study examples and concepts) then ✏️ Challenge (apply what you learned). You\'ll see a big gold button when you\'re ready to start the challenge.',target:'.content',position:'left'},
+{title:'You\'re Ready! 🚀',text:'Click Module 1: Foundations to begin your first lesson. Professor Claude will grade your work, give you personalized feedback, and help you improve. Good luck!',target:null,position:'center'}
+];
+let tourStep=0;
+function shouldShowTour(){return !localStorage.getItem('pai_tour_done')}
+function startTour(){
+  tourStep=0;
+  const overlay=document.createElement('div');overlay.id='tour-overlay';
+  overlay.innerHTML='<div class="tour-backdrop" id="tour-backdrop"></div><div id="tour-spotlight" class="tour-spotlight" style="display:none"></div><div id="tour-card" class="tour-card"></div>';
+  document.body.appendChild(overlay);renderTourStep();
+}
+function renderTourStep(){
+  const step=tourSteps[tourStep];const card=document.getElementById('tour-card');const spot=document.getElementById('tour-spotlight');const backdrop=document.getElementById('tour-backdrop');
+  if(!card)return;
+  const isFirst=tourStep===0;const isLast=tourStep===tourSteps.length-1;
+  let btns='<div class="tour-btns">';
+  if(!isFirst)btns+='<button class="tour-btn tour-btn-back" onclick="prevTourStep()">← Back</button>';else btns+='<button class="tour-btn-skip" onclick="endTour()">Skip tour</button>';
+  btns+=`<button class="tour-btn tour-btn-next" onclick="${isLast?'endTour()':'nextTourStep()'}">${isLast?'Start Learning! →':'Next →'}</button></div>`;
+  card.innerHTML=`<div class="tour-step-indicator">Step ${tourStep+1} of ${tourSteps.length}</div><h3>${step.title}</h3><p>${step.text}</p>${btns}`;
+  if(step.target){
+    const el=document.querySelector(step.target);if(el){
+      const r=el.getBoundingClientRect();
+      spot.style.display='block';spot.style.top=(r.top-6)+'px';spot.style.left=(r.left-6)+'px';spot.style.width=(r.width+12)+'px';spot.style.height=(r.height+12)+'px';
+      backdrop.style.background='transparent';
+      if(step.position==='right'){card.style.top=(r.top)+'px';card.style.left=(r.right+16)+'px';card.style.right='auto';card.style.bottom='auto';}
+      else if(step.position==='bottom'){card.style.top=(r.bottom+16)+'px';card.style.left=(r.left)+'px';card.style.right='auto';card.style.bottom='auto';}
+      else if(step.position==='left'){card.style.top=(r.top)+'px';card.style.right=(window.innerWidth-r.left+16)+'px';card.style.left='auto';card.style.bottom='auto';}
+    }
+  }else{
+    spot.style.display='none';backdrop.style.background='rgba(0,0,0,0.75)';
+    card.style.top='50%';card.style.left='50%';card.style.transform='translate(-50%,-50%)';card.style.right='auto';card.style.bottom='auto';
+  }
+}
+function nextTourStep(){tourStep++;if(tourStep<tourSteps.length){const card=document.getElementById('tour-card');card.style.transform='';renderTourStep()}else endTour()}
+function prevTourStep(){if(tourStep>0){tourStep--;const card=document.getElementById('tour-card');card.style.transform='';renderTourStep()}}
+function endTour(){localStorage.setItem('pai_tour_done','1');const o=document.getElementById('tour-overlay');if(o)o.remove()}
+function resetTour(){localStorage.removeItem('pai_tour_done');startTour()}
+setTimeout(()=>{if(shouldShowTour())startTour()},1000);
 </script>
 </body>
 </html>
