@@ -83,7 +83,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     grading: !!ANTHROPIC_API_KEY,
     database: !!supabase,
-    version: '2.4.0'
+    version: '2.5.0'
   });
 });
 
@@ -311,6 +311,56 @@ app.get('/api/certificate/:moduleId', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error('Certificate error:', err);
     res.status(500).json({ error: 'Failed to generate certificate.' });
+  }
+});
+
+
+// ========================================
+// WEEKLY LEADERBOARD
+// ========================================
+app.get('/api/leaderboard', async (req, res) => {
+  if (!supabase) return res.json({ leaderboard: [], period: 'weekly' });
+  try {
+    // Get all profiles with XP
+    const { data: profiles } = await supabase.from('profiles')
+      .select('id, name, xp, company, current_streak, badges')
+      .order('xp', { ascending: false })
+      .limit(20);
+
+    // Get grades from last 7 days for weekly activity
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const { data: recentGrades } = await supabase.from('grades')
+      .select('user_id, score, graded_at')
+      .gte('graded_at', weekAgo.toISOString());
+
+    // Calculate weekly stats per user
+    const weeklyStats = {};
+    (recentGrades || []).forEach(g => {
+      if (!weeklyStats[g.user_id]) weeklyStats[g.user_id] = { submissions: 0, totalScore: 0, bestScore: 0 };
+      weeklyStats[g.user_id].submissions++;
+      weeklyStats[g.user_id].totalScore += g.score;
+      if (g.score > weeklyStats[g.user_id].bestScore) weeklyStats[g.user_id].bestScore = g.score;
+    });
+
+    const leaderboard = (profiles || []).map((p, i) => ({
+      rank: i + 1,
+      name: p.name || 'Anonymous',
+      xp: p.xp || 0,
+      company: p.company || '',
+      streak: p.current_streak || 0,
+      badges: (p.badges || []).length,
+      weeklySubmissions: weeklyStats[p.id]?.submissions || 0,
+      weeklyAvg: weeklyStats[p.id]?.submissions > 0
+        ? Math.round(weeklyStats[p.id].totalScore / weeklyStats[p.id].submissions)
+        : 0,
+      weeklyBest: weeklyStats[p.id]?.bestScore || 0
+    }));
+
+    res.json({ leaderboard, period: 'weekly', generatedAt: new Date().toISOString() });
+  } catch (err) {
+    console.error('Leaderboard error:', err);
+    res.json({ leaderboard: [], period: 'weekly' });
   }
 });
 

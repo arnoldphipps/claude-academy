@@ -175,7 +175,7 @@ function renderStudent(data,isSuper){
     return'<div class="lesson-card"><div class="lesson-card-header"><div><div style="font-size:11px;color:#888;margin-bottom:2px">'+(MN[mod]||mod)+'</div><div class="lesson-card-title">'+(LN[lid]||lid)+'</div></div><div style="text-align:right"><div class="lesson-card-score '+sc+'">'+ls.best_score+ch+'</div><div style="font-size:11px;color:#666">best score</div></div></div><div class="lesson-card-meta"><span>📝 '+ls.attempts+' attempt'+(ls.attempts>1?'s':'')+'</span><span>📅 First: '+new Date(ls.first_graded_at).toLocaleDateString()+'</span><span>📅 Latest: '+new Date(ls.latest_graded_at).toLocaleDateString()+'</span>'+(imp?'<span style="color:#22c55e">📈 Improved!</span>':'')+'</div>'+(ls.best_feedback?'<div class="lesson-card-feedback">'+ls.best_feedback+'</div>':'')+'</div>';
   }).join('');
 
-  c.innerHTML=(isSuper?'<div class="tab-bar"><button class="btn-tab active" onclick="loadDashboard()">📊 My Progress</button><button class="btn-tab" onclick="loadTeam()">👥 Team Dashboard</button></div>':'')+
+  c.innerHTML=(isSuper?'<div class="tab-bar"><button class="btn-tab active" onclick="loadDashboard()">📊 My Progress</button><button class="btn-tab" onclick="loadLeaderboard()">🏆 Leaderboard</button><button class="btn-tab" onclick="loadTeam()">👥 Team Dashboard</button><button class="btn-tab" onclick="loadLeaderboard()">🏆 Leaderboard</button></div>':'')+
   '<div style="margin-bottom:24px"><div class="rank-display"><span class="rank-emoji">'+rank.e+'</span><div><div class="rank-name">'+rank.n+'</div><div class="rank-sub">'+profile.name+' · '+profile.xp+' XP'+(next?' · Next: '+next.e+' '+next.n+' at '+next.min+' XP':' · MAX RANK')+'</div></div></div><div class="xp-bar"><div class="xp-fill" style="width:'+xpPct+'%"></div></div><div class="xp-label">'+profile.xp+' / '+(next?next.min:profile.xp)+' XP</div></div>'+
   '<div class="section"><div class="section-header"><h2>Lesson Progress</h2></div><div class="progress-overview">'+dots+'</div></div>'+
   '<div class="stats-grid"><div class="stat-card"><div class="label">Lessons Graded</div><div class="value">'+stats.lessons_graded+'</div><div class="sub">of 12 total</div></div><div class="stat-card"><div class="label">Best Score Avg</div><div class="value">'+stats.avg_best_score+'</div><div class="sub">across graded lessons</div></div><div class="stat-card"><div class="label">Improvement</div><div class="value">'+(stats.improvement>=0?'+':'')+stats.improvement+'</div><div class="sub">'+(stats.improvement>0?'<span class="improvement">first → best avg</span>':'first vs best')+'</div></div><div class="stat-card"><div class="label">Total Attempts</div><div class="value">'+stats.total_attempts+'</div><div class="sub">'+stats.lessons_graded+' lesson'+(stats.lessons_graded!==1?'s':'')+' attempted</div></div><div class="stat-card"><div class="label">Completion</div><div class="value">'+stats.completion_pct+'%</div><div class="sub">'+stats.completed_lessons+' of 12 completed</div></div><div class="stat-card"><div class="label">Time Invested</div><div class="value">'+(stats.total_time_minutes>=60?Math.floor(stats.total_time_minutes/60)+'h':stats.total_time_minutes+'m')+'</div><div class="sub">total training time</div></div></div>'+
@@ -210,7 +210,7 @@ function renderTeam(data){
     return'<tr><td><span class="leaderboard-rank">#'+(i+1)+'</span></td><td><strong>'+m.name+'</strong></td><td style="color:#888">'+m.email+'</td><td style="min-width:140px"><div style="display:flex;align-items:center;gap:8px"><div class="progress-bar" style="flex:1"><div class="progress-fill '+fc+'" style="width:'+m.completion_pct+'%"></div></div><span style="font-size:12px;color:#aaa;min-width:55px">'+m.completed_lessons+'/'+m.total_lessons+'</span></div></td><td><strong>'+m.avg_score+'</strong>/100'+(lg>0?'<div style="font-size:10px;color:#666">'+lg+' lesson'+(lg>1?'s':'')+' · '+att+' attempt'+(att>1?'s':'')+'</div>':'')+'</td><td>'+t+'</td><td>'+(m.xp||0)+' XP</td><td>'+sb+'<div style="font-size:10px;color:#555;margin-top:2px">'+la+'</div></td></tr>';
   }).join('');
 
-  c.innerHTML='<div class="tab-bar"><button class="btn-tab" onclick="loadDashboard()">📊 My Progress</button><button class="btn-tab active" onclick="loadTeam()">👥 Team Dashboard</button></div>'+
+  c.innerHTML='<div class="tab-bar"><button class="btn-tab" onclick="loadDashboard()">📊 My Progress</button><button class="btn-tab active" onclick="loadTeam()">👥 Team Dashboard</button><button class="btn-tab" onclick="loadLeaderboard()">🏆 Leaderboard</button></div>'+
   '<div class="stats-grid"><div class="stat-card"><div class="label">Team Members</div><div class="value">'+(stats.total_members||0)+'</div><div class="sub">'+(stats.fully_completed||0)+' completed all lessons</div></div><div class="stat-card"><div class="label">Active Students</div><div class="value">'+members.filter(m=>(m.lessons_graded||m.grades_count||m.in_progress_lessons||0)>0).length+'</div><div class="sub">have started training</div></div><div class="stat-card"><div class="label">Avg Best Score</div><div class="value">'+(stats.avg_score||0)+'</div><div class="sub">best score per lesson</div></div><div class="stat-card"><div class="label">Total Training Time</div><div class="value">'+(stats.total_time_hours||0)+'h</div><div class="sub">invested by team</div></div></div>'+
   '<div class="section"><div class="section-header"><h2>Team Progress</h2><button class="btn btn-outline" onclick="exportCSV()">📥 Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Name</th><th>Email</th><th>Progress</th><th>Best Score</th><th>Time</th><th>XP</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>'+
   '<div class="section"><div class="section-header"><h2>Invite Team Members</h2></div><div class="invite-form"><input type="email" id="invite-email" placeholder="colleague@company.com"><button class="btn btn-accent" onclick="inviteMember()">Invite</button><span id="invite-msg"></span></div></div>';
@@ -230,6 +230,22 @@ async function exportCSV(){
 }
 
 loadDashboard();
+
+async function loadLeaderboard(){
+  const el=document.getElementById('leaderboard-content');
+  if(!el)return;
+  try{
+    const r=await fetch('/api/leaderboard');
+    const d=await r.json();
+    if(!d.leaderboard||d.leaderboard.length===0){el.innerHTML='<p>No data yet. Be the first to get on the leaderboard!</p>';return;}
+    let h='<div class="table-wrap"><table><thead><tr><th>Rank</th><th>Name</th><th>XP</th><th>🔥 Streak</th><th>🏆 Badges</th><th>This Week</th></tr></thead><tbody>';
+    d.leaderboard.forEach(u=>{
+      h+=`<tr><td><span class="leaderboard-rank">#${u.rank}</span></td><td><strong>${u.name}</strong>${u.company?' · '+u.company:''}</td><td>${u.xp}</td><td>${u.streak} days</td><td>${u.badges}</td><td>${u.weeklySubmissions} submissions${u.weeklyAvg?' · avg '+u.weeklyAvg:''}</td></tr>`;
+    });
+    h+='</tbody></table></div>';
+    el.innerHTML=h;
+  }catch(e){el.innerHTML='<p>Could not load leaderboard.</p>';}
+}
 </script>
 </body>
 </html>
