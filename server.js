@@ -355,6 +355,109 @@ app.get('/api/grades', authMiddleware, async (req, res) => {
 });
 
 // ========================================
+// STUDENT PERSONAL DASHBOARD
+// ========================================
+app.get('/api/dashboard/student', authMiddleware, async (req, res) => {
+  try {
+    // Get profile
+    const { data: profile } = await supabase.from('profiles')
+      .select('*').eq('id', req.user.id).single();
+
+    // Get all progress
+    const { data: progress } = await supabase.from('progress')
+      .select('*').eq('user_id', req.user.id).order('updated_at', { ascending: false });
+
+    // Get all grades (every attempt)
+    const { data: grades } = await supabase.from('grades')
+      .select('*').eq('user_id', req.user.id).order('graded_at', { ascending: true });
+
+    // Compute per-lesson stats
+    const lessonStats = {};
+    (grades || []).forEach(g => {
+      if (!lessonStats[g.lesson_id]) {
+        lessonStats[g.lesson_id] = {
+          lesson_id: g.lesson_id,
+          module_id: g.module_id,
+          first_score: g.score,
+          best_score: g.score,
+          latest_score: g.score,
+          attempts: 0,
+          first_feedback: g.feedback,
+          best_feedback: g.feedback,
+          first_strengths: g.strengths,
+          best_strengths: g.strengths,
+          first_improvements: g.improvements,
+          best_improvements: g.improvements,
+          first_graded_at: g.graded_at,
+          latest_graded_at: g.graded_at,
+          scores: []
+        };
+      }
+      const ls = lessonStats[g.lesson_id];
+      ls.attempts++;
+      ls.latest_score = g.score;
+      ls.latest_graded_at = g.graded_at;
+      ls.scores.push({ score: g.score, date: g.graded_at });
+      if (g.score > ls.best_score) {
+        ls.best_score = g.score;
+        ls.best_feedback = g.feedback;
+        ls.best_strengths = g.strengths;
+        ls.best_improvements = g.improvements;
+      }
+    });
+
+    // Compute progress stats
+    const completedLessons = (progress || []).filter(p => p.status === 'completed').length;
+    const inProgressLessons = (progress || []).filter(p => p.status === 'in_progress').length;
+    const totalTimeSeconds = (progress || []).reduce((sum, p) => sum + (p.time_spent_seconds || 0), 0);
+
+    // Best scores for average calculation
+    const bestScores = Object.values(lessonStats).map(ls => ls.best_score);
+    const avgBestScore = bestScores.length > 0
+      ? Math.round(bestScores.reduce((s, v) => s + v, 0) / bestScores.length)
+      : 0;
+
+    // Score improvement (first attempt avg vs best avg)
+    const firstScores = Object.values(lessonStats).map(ls => ls.first_score);
+    const avgFirstScore = firstScores.length > 0
+      ? Math.round(firstScores.reduce((s, v) => s + v, 0) / firstScores.length)
+      : 0;
+
+    // Total attempts
+    const totalAttempts = (grades || []).length;
+
+    res.json({
+      profile: {
+        name: profile?.name || 'Student',
+        email: profile?.email || '',
+        role: profile?.role || 'student',
+        xp: profile?.xp || 0,
+        company: profile?.company || '',
+        created_at: profile?.created_at
+      },
+      stats: {
+        completed_lessons: completedLessons,
+        in_progress_lessons: inProgressLessons,
+        total_lessons: 12,
+        completion_pct: Math.round((completedLessons / 12) * 100),
+        avg_best_score: avgBestScore,
+        avg_first_score: avgFirstScore,
+        improvement: avgBestScore - avgFirstScore,
+        total_attempts: totalAttempts,
+        lessons_graded: bestScores.length,
+        total_time_minutes: Math.round(totalTimeSeconds / 60)
+      },
+      lessons: lessonStats,
+      progress: progress || [],
+      grades: grades || []
+    });
+  } catch (err) {
+    console.error('Student dashboard error:', err);
+    res.status(500).json({ error: 'Failed to load dashboard.' });
+  }
+});
+
+// ========================================
 // SUPERVISOR DASHBOARD
 // ========================================
 app.get('/api/dashboard/team', authMiddleware, async (req, res) => {
