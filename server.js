@@ -83,8 +83,91 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     grading: !!ANTHROPIC_API_KEY,
     database: !!supabase,
-    version: '2.1.0'
+    version: '2.2.0'
   });
+});
+
+// ========================================
+// STREAK TRACKING
+// ========================================
+async function updateStreak(userId) {
+  if (!supabase) return null;
+  try {
+    const { data: profile } = await supabase.from('profiles')
+      .select('current_streak, longest_streak, last_active_date')
+      .eq('id', userId).single();
+    if (!profile) return null;
+
+    const today = new Date().toISOString().split('T')[0];
+    const lastActive = profile.last_active_date;
+
+    // Already checked in today
+    if (lastActive === today) return { current_streak: profile.current_streak, longest_streak: profile.longest_streak, today: true };
+
+    // Calculate yesterday's date
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+    let newStreak;
+    if (lastActive === yesterdayStr) {
+      // Consecutive day — increment streak
+      newStreak = (profile.current_streak || 0) + 1;
+    } else {
+      // Streak broken or first time — start at 1
+      newStreak = 1;
+    }
+
+    const longestStreak = Math.max(newStreak, profile.longest_streak || 0);
+
+    await supabase.from('profiles').update({
+      current_streak: newStreak,
+      longest_streak: longestStreak,
+      last_active_date: today,
+      streak_updated_at: new Date().toISOString()
+    }).eq('id', userId);
+
+    return { current_streak: newStreak, longest_streak: longestStreak, today: false, new_day: true };
+  } catch (err) {
+    console.error('Streak update error:', err);
+    return null;
+  }
+}
+
+app.get('/api/streak', authMiddleware, async (req, res) => {
+  try {
+    const { data: profile } = await supabase.from('profiles')
+      .select('current_streak, longest_streak, last_active_date')
+      .eq('id', req.user.id).single();
+
+    // Check if streak is still valid (not broken)
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const lastActive = profile?.last_active_date;
+
+    let currentStreak = profile?.current_streak || 0;
+    // If last active was before yesterday, streak is broken
+    if (lastActive && lastActive !== today && lastActive !== yesterdayStr) {
+      currentStreak = 0;
+    }
+
+    res.json({
+      current_streak: currentStreak,
+      longest_streak: profile?.longest_streak || 0,
+      last_active_date: lastActive,
+      active_today: lastActive === today
+    });
+  } catch (err) {
+    console.error('Streak error:', err);
+    res.json({ current_streak: 0, longest_streak: 0 });
+  }
+});
+
+app.post('/api/streak/checkin', authMiddleware, async (req, res) => {
+  const result = await updateStreak(req.user.id);
+  res.json(result || { current_streak: 0, longest_streak: 0 });
 });
 
 // ========================================
@@ -700,6 +783,9 @@ app.post('/api/grade', apiLimiter, optionalAuth, async (req, res) => {
         .eq('user_id', req.user.id)
         .eq('lesson_id', lesson_id);
       result.xp_earned = xpEarned;
+      // Update daily streak
+      const streakResult = await updateStreak(req.user.id);
+      if (streakResult) result.streak = streakResult;
     }
 
     res.json(result);
