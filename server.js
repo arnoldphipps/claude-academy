@@ -153,6 +153,22 @@ app.post('/api/auth/logout', async (req, res) => {
   res.json({ success: true });
 });
 
+app.post('/api/auth/reset-password', apiLimiter, async (req, res) => {
+  if (!supabase) return res.status(503).json({ error: 'Service unavailable.' });
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: 'Email is required.' });
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://www.promptaiacademy.com/login'
+    });
+    // Always return success to prevent email enumeration
+    res.json({ message: 'If that email exists, a reset link has been sent.' });
+  } catch (err) {
+    console.error('Password reset error:', err);
+    res.json({ message: 'If that email exists, a reset link has been sent.' });
+  }
+});
+
 app.get('/api/auth/me', authMiddleware, (req, res) => {
   res.json({ user: { id: req.user.id, email: req.user.email, ...req.user.profile } });
 });
