@@ -221,6 +221,69 @@ app.get('/api/progress', authMiddleware, async (req, res) => {
 });
 
 // ========================================
+// DRAFTS (save student work across sessions)
+// ========================================
+app.post('/api/drafts', authMiddleware, async (req, res) => {
+  const { lesson_id, module_id, answer } = req.body;
+  if (!lesson_id) return res.status(400).json({ error: 'lesson_id required.' });
+  try {
+    const now = new Date().toISOString();
+    // Upsert into progress table with last_answer
+    const { data: existing } = await supabase
+      .from('progress')
+      .select('id')
+      .eq('user_id', req.user.id)
+      .eq('lesson_id', lesson_id)
+      .single();
+
+    if (existing) {
+      await supabase.from('progress')
+        .update({ last_answer: answer || '', updated_at: now })
+        .eq('id', existing.id);
+    } else {
+      await supabase.from('progress').insert({
+        user_id: req.user.id,
+        lesson_id,
+        module_id: module_id || '',
+        status: 'in_progress',
+        last_answer: answer || '',
+        time_spent_seconds: 0,
+        started_at: now,
+        created_at: now,
+        updated_at: now
+      });
+    }
+    res.json({ saved: true });
+  } catch (err) {
+    console.error('Draft save error:', err);
+    res.json({ saved: false });
+  }
+});
+
+app.get('/api/drafts', authMiddleware, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('progress')
+      .select('lesson_id, last_answer, status, best_score')
+      .eq('user_id', req.user.id);
+    if (error) throw error;
+    // Return as a map: { lesson_id: { answer, status, best_score } }
+    const drafts = {};
+    (data || []).forEach(d => {
+      drafts[d.lesson_id] = {
+        answer: d.last_answer || '',
+        status: d.status,
+        best_score: d.best_score || 0
+      };
+    });
+    res.json(drafts);
+  } catch (err) {
+    console.error('Draft load error:', err);
+    res.json({});
+  }
+});
+
+// ========================================
 // GRADES
 // ========================================
 app.post('/api/grades', authMiddleware, async (req, res) => {
@@ -242,18 +305,34 @@ app.post('/api/grades', authMiddleware, async (req, res) => {
     }).select().single();
     if (error) throw error;
 
-    // Update XP in profile
-    const xpEarned = Math.round(score / 10) * 5;
-    const { data: profile } = await supabase.from('profiles').select('xp').eq('id', req.user.id).single();
-    await supabase.from('profiles').update({ xp: (profile?.xp || 0) + xpEarned }).eq('id', req.user.id);
-
-    // Update progress to completed
-    await supabase.from('progress')
-      .update({ status: 'completed', completed_at: new Date().toISOString() })
+    // Ensure progress record exists and update best score
+    const now = new Date().toISOString();
+    const { data: existing } = await supabase.from('progress')
+      .select('id, best_score, status')
       .eq('user_id', req.user.id)
-      .eq('lesson_id', lesson_id);
+      .eq('lesson_id', lesson_id)
+      .single();
 
-    res.json({ ...data, xp_earned: xpEarned });
+    if (existing) {
+      const update = { updated_at: now };
+      if (score > (existing.best_score || 0)) update.best_score = score;
+      if (existing.status === 'started') update.status = 'in_progress';
+      await supabase.from('progress').update(update).eq('id', existing.id);
+    } else {
+      await supabase.from('progress').insert({
+        user_id: req.user.id,
+        lesson_id,
+        module_id: module_id || '',
+        status: 'in_progress',
+        best_score: score,
+        time_spent_seconds: 0,
+        started_at: now,
+        created_at: now,
+        updated_at: now
+      });
+    }
+
+    res.json({ ...data });
   } catch (err) {
     console.error('Grade save error:', err);
     res.status(500).json({ error: 'Failed to save grade.' });
@@ -314,19 +393,31 @@ app.get('/api/dashboard/team', authMiddleware, async (req, res) => {
       const memberProgress = (progress || []).filter(p => p.user_id === member.id);
       const memberGrades = (grades || []).filter(g => g.user_id === member.id);
       const completedLessons = memberProgress.filter(p => p.status === 'completed').length;
+      const inProgressLessons = memberProgress.filter(p => p.status === 'in_progress').length;
       const totalTimeSeconds = memberProgress.reduce((sum, p) => sum + (p.time_spent_seconds || 0), 0);
-      const avgScore = memberGrades.length > 0
-        ? Math.round(memberGrades.reduce((sum, g) => sum + g.score, 0) / memberGrades.length)
+      
+      // Use BEST score per lesson, not average of all attempts
+      const bestByLesson = {};
+      memberGrades.forEach(g => {
+        if (!bestByLesson[g.lesson_id] || g.score > bestByLesson[g.lesson_id]) {
+          bestByLesson[g.lesson_id] = g.score;
+        }
+      });
+      const bestScores = Object.values(bestByLesson);
+      const avgScore = bestScores.length > 0
+        ? Math.round(bestScores.reduce((sum, s) => sum + s, 0) / bestScores.length)
         : 0;
 
       return {
         ...member,
         completed_lessons: completedLessons,
+        in_progress_lessons: inProgressLessons,
         total_lessons: 12,
         completion_pct: Math.round((completedLessons / 12) * 100),
         total_time_minutes: Math.round(totalTimeSeconds / 60),
         avg_score: avgScore,
-        grades_count: memberGrades.length,
+        lessons_graded: bestScores.length,
+        total_attempts: memberGrades.length,
         last_active: memberProgress.length > 0
           ? memberProgress.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0].updated_at
           : member.created_at
