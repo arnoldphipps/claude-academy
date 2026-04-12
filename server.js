@@ -83,7 +83,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     grading: !!ANTHROPIC_API_KEY,
     database: !!supabase,
-    version: '2.2.0'
+    version: '2.3.0'
   });
 });
 
@@ -168,6 +168,89 @@ app.get('/api/streak', authMiddleware, async (req, res) => {
 app.post('/api/streak/checkin', authMiddleware, async (req, res) => {
   const result = await updateStreak(req.user.id);
   res.json(result || { current_streak: 0, longest_streak: 0 });
+});
+
+// ========================================
+// ACHIEVEMENT BADGES
+// ========================================
+const BADGE_DEFS = [
+  { id: 'first_steps', name: 'First Steps', emoji: '🎯', desc: 'Submit your first graded challenge', check: (ctx) => ctx.totalGrades >= 1 },
+  { id: 'sharp_shooter', name: 'Sharp Shooter', emoji: '🎯', desc: 'Score 80+ on any challenge', check: (ctx) => ctx.bestScore >= 80 },
+  { id: 'perfect_score', name: 'Perfect Score', emoji: '💯', desc: 'Score 100 on any challenge', check: (ctx) => ctx.bestScore >= 100 },
+  { id: 'comeback_kid', name: 'Comeback Kid', emoji: '📈', desc: 'Improve a score by 15+ points', check: (ctx) => ctx.biggestImprovement >= 15 },
+  { id: 'on_fire', name: 'On Fire', emoji: '🔥', desc: 'Maintain a 3-day streak', check: (ctx) => ctx.longestStreak >= 3 },
+  { id: 'week_warrior', name: 'Week Warrior', emoji: '⚡', desc: 'Maintain a 7-day streak', check: (ctx) => ctx.longestStreak >= 7 },
+  { id: 'month_master', name: 'Month Master', emoji: '🏆', desc: 'Maintain a 30-day streak', check: (ctx) => ctx.longestStreak >= 30 },
+  { id: 'persistent', name: 'Persistent', emoji: '💪', desc: 'Submit 10 total graded challenges', check: (ctx) => ctx.totalGrades >= 10 },
+  { id: 'dedicated', name: 'Dedicated', emoji: '🏅', desc: 'Submit 25 total graded challenges', check: (ctx) => ctx.totalGrades >= 25 },
+  { id: 'half_way', name: 'Half Way There', emoji: '🌟', desc: 'Complete 6 lessons', check: (ctx) => ctx.completedLessons >= 6 },
+  { id: 'honor_roll', name: 'Honor Roll', emoji: '🎖️', desc: 'Average best score above 85', check: (ctx) => ctx.avgBestScore >= 85 && ctx.lessonsGraded >= 3 },
+  { id: 'graduate', name: 'Graduate', emoji: '🎓', desc: 'Complete all 12 lessons', check: (ctx) => ctx.completedLessons >= 12 },
+];
+
+async function checkBadges(userId) {
+  if (!supabase) return [];
+  try {
+    const { data: profile } = await supabase.from('profiles').select('badges, current_streak, longest_streak').eq('id', userId).single();
+    const { data: grades } = await supabase.from('grades').select('lesson_id, score').eq('user_id', userId);
+    const { data: progress } = await supabase.from('progress').select('lesson_id, status, best_score').eq('user_id', userId);
+
+    const existingBadges = profile?.badges || [];
+    const existingIds = existingBadges.map(b => b.id);
+
+    // Build context for badge checks
+    const completedLessons = (progress || []).filter(p => p.status === 'completed').length;
+    const bestByLesson = {};
+    const firstByLesson = {};
+    (grades || []).forEach(g => {
+      if (!firstByLesson[g.lesson_id]) firstByLesson[g.lesson_id] = g.score;
+      if (!bestByLesson[g.lesson_id] || g.score > bestByLesson[g.lesson_id]) bestByLesson[g.lesson_id] = g.score;
+    });
+    const bestScores = Object.values(bestByLesson);
+    const improvements = Object.keys(bestByLesson).map(lid => (bestByLesson[lid] || 0) - (firstByLesson[lid] || 0));
+
+    const ctx = {
+      totalGrades: (grades || []).length,
+      bestScore: bestScores.length > 0 ? Math.max(...bestScores) : 0,
+      avgBestScore: bestScores.length > 0 ? Math.round(bestScores.reduce((s, v) => s + v, 0) / bestScores.length) : 0,
+      lessonsGraded: bestScores.length,
+      completedLessons,
+      longestStreak: profile?.longest_streak || 0,
+      currentStreak: profile?.current_streak || 0,
+      biggestImprovement: improvements.length > 0 ? Math.max(...improvements) : 0,
+    };
+
+    // Check for new badges
+    const newBadges = [];
+    BADGE_DEFS.forEach(def => {
+      if (!existingIds.includes(def.id) && def.check(ctx)) {
+        const badge = { id: def.id, name: def.name, emoji: def.emoji, desc: def.desc, earned_at: new Date().toISOString() };
+        newBadges.push(badge);
+      }
+    });
+
+    if (newBadges.length > 0) {
+      const allBadges = [...existingBadges, ...newBadges];
+      await supabase.from('profiles').update({ badges: allBadges }).eq('id', userId);
+    }
+
+    return newBadges;
+  } catch (err) {
+    console.error('Badge check error:', err);
+    return [];
+  }
+}
+
+app.get('/api/badges', authMiddleware, async (req, res) => {
+  try {
+    const { data: profile } = await supabase.from('profiles').select('badges').eq('id', req.user.id).single();
+    res.json({
+      earned: profile?.badges || [],
+      available: BADGE_DEFS.map(d => ({ id: d.id, name: d.name, emoji: d.emoji, desc: d.desc }))
+    });
+  } catch (err) {
+    res.json({ earned: [], available: [] });
+  }
 });
 
 // ========================================
@@ -786,6 +869,9 @@ app.post('/api/grade', apiLimiter, optionalAuth, async (req, res) => {
       // Update daily streak
       const streakResult = await updateStreak(req.user.id);
       if (streakResult) result.streak = streakResult;
+      // Check for new badges
+      const newBadges = await checkBadges(req.user.id);
+      if (newBadges.length > 0) result.new_badges = newBadges;
     }
 
     res.json(result);
