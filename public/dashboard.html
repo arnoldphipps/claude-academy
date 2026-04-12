@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3M38SRWE6C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-3M38SRWE6C");</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prompt AI Academy — Team Dashboard</title>
@@ -142,17 +144,17 @@ function renderDashboard(data) {
       <div class="stat-card">
         <div class="label">Team Members</div>
         <div class="value">${stats.total_members}</div>
-        <div class="sub">${stats.fully_completed} fully completed</div>
+        <div class="sub">${stats.fully_completed} completed all lessons</div>
       </div>
       <div class="stat-card">
-        <div class="label">Avg Completion</div>
-        <div class="value">${stats.avg_completion}%</div>
-        <div class="sub">across all members</div>
+        <div class="label">Active Students</div>
+        <div class="value">${members.filter(m => (m.lessons_graded || m.grades_count || m.in_progress_lessons || 0) > 0).length}</div>
+        <div class="sub">have started training</div>
       </div>
       <div class="stat-card">
-        <div class="label">Avg Score</div>
+        <div class="label">Avg Best Score</div>
         <div class="value">${stats.avg_score}</div>
-        <div class="sub">out of 100</div>
+        <div class="sub">best score per lesson</div>
       </div>
       <div class="stat-card">
         <div class="label">Total Training Time</div>
@@ -177,7 +179,7 @@ function renderDashboard(data) {
               <th>Name</th>
               <th>Email</th>
               <th>Progress</th>
-              <th>Avg Score</th>
+              <th>Best Score</th>
               <th>Time Spent</th>
               <th>XP</th>
               <th>Status</th>
@@ -186,12 +188,18 @@ function renderDashboard(data) {
           <tbody>
             ${sorted.map((m, i) => {
               const fillClass = m.completion_pct >= 70 ? 'fill-high' : m.completion_pct >= 30 ? 'fill-mid' : 'fill-low';
+              const hasGrades = (m.lessons_graded || m.grades_count || 0) > 0;
+              const hasProgress = (m.in_progress_lessons || 0) > 0;
               const statusBadge = m.completion_pct === 100 ? '<span class="badge badge-green">Completed</span>'
-                : m.completion_pct > 0 ? '<span class="badge badge-yellow">In Progress</span>'
+                : m.completed_lessons > 0 ? '<span class="badge badge-yellow">In Progress</span>'
+                : hasGrades || hasProgress ? '<span class="badge badge-yellow">Active</span>'
                 : '<span class="badge badge-gray">Not Started</span>';
               const timeStr = m.total_time_minutes >= 60
                 ? Math.floor(m.total_time_minutes/60) + 'h ' + (m.total_time_minutes%60) + 'm'
                 : m.total_time_minutes + 'm';
+              const attempts = m.total_attempts || m.grades_count || 0;
+              const lessonsGraded = m.lessons_graded || 0;
+              const lastActive = m.last_active ? new Date(m.last_active).toLocaleDateString() : '—';
               return `<tr>
                 <td><span class="leaderboard-rank">#${i+1}</span></td>
                 <td><strong>${m.name}</strong></td>
@@ -202,10 +210,10 @@ function renderDashboard(data) {
                     <span style="font-size:12px;color:#aaa;min-width:55px">${m.completed_lessons}/${m.total_lessons}</span>
                   </div>
                 </td>
-                <td><strong>${m.avg_score}</strong>/100</td>
+                <td><strong>${m.avg_score}</strong>/100${lessonsGraded > 0 ? `<div style="font-size:10px;color:#666">${lessonsGraded} lesson${lessonsGraded>1?'s':''} · ${attempts} attempt${attempts>1?'s':''}</div>` : ''}</td>
                 <td>${timeStr}</td>
                 <td>${m.xp || 0} XP</td>
-                <td>${statusBadge}</td>
+                <td>${statusBadge}<div style="font-size:10px;color:#555;margin-top:2px">${lastActive}</div></td>
               </tr>`;
             }).join('')}
           </tbody>
