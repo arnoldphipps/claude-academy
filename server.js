@@ -83,7 +83,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     grading: !!ANTHROPIC_API_KEY,
     database: !!supabase,
-    version: '2.3.0'
+    version: '2.3.1'
   });
 });
 
