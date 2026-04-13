@@ -83,7 +83,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     grading: !!ANTHROPIC_API_KEY,
     database: !!supabase,
-    version: '2.5.0'
+    version: '2.6.0'
   });
 });
 
@@ -1049,6 +1049,9 @@ app.post('/api/generate-challenge', apiLimiter, async (req, res) => {
 // ========================================
 app.get('/academy', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'academy.html'));
+});
+app.get('/assessment', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'assessment.html'));
 });
 app.get('/certificate', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'certificate.html'));

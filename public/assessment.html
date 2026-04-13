@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3M38SRWE6C"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-3M38SRWE6C");</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Communication Assessment — How Well Do You Communicate with AI?</title>
+<meta property="og:title" content="AI Communication Assessment — How Well Do You Talk to AI?">
+<meta property="og:description" content="Take this free 2-minute assessment to discover your AI Communication Score. Can you beat my score?">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:#f5f7fa;color:#111827;min-height:100vh}
+.container{max-width:680px;margin:0 auto;padding:32px 20px}
+.header{text-align:center;margin-bottom:40px}
+.header h1{font-size:32px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#2563eb,#059669);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{color:#6b7280;font-size:15px}
+.progress-bar{width:100%;height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:32px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#059669);border-radius:3px;transition:width 0.4s ease}
+.question-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:32px;margin-bottom:24px;box-shadow:0 4px 16px rgba(0,0,0,0.04)}
+.q-number{font-size:12px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.q-text{font-size:18px;font-weight:600;margin-bottom:20px;line-height:1.5}
+.options{display:flex;flex-direction:column;gap:10px}
+.option{padding:14px 18px;border:2px solid #e5e7eb;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.15s;display:flex;align-items:center;gap:12px}
+.option:hover{border-color:#2563eb;background:rgba(37,99,235,0.03)}
+.option.selected{border-color:#2563eb;background:rgba(37,99,235,0.08);color:#2563eb}
+.option-letter{width:28px;height:28px;border-radius:50%;border:2px solid #d1d5de;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.option.selected .option-letter{background:#2563eb;border-color:#2563eb;color:#fff}
+.nav-btns{display:flex;gap:12px;justify-content:space-between}
+.btn{padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.btn-next{background:#2563eb;color:#fff}.btn-next:hover{background:#1d4ed8}
+.btn-next:disabled{background:#d1d5de;cursor:not-allowed}
+.btn-back{background:none;border:1px solid #d1d5de;color:#6b7280}.btn-back:hover{border-color:#9ca3af}
+.results{text-align:center;padding:20px 0}
+.score-circle{width:160px;height:160px;border-radius:50%;margin:0 auto 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.score-circle::before{content:'';position:absolute;inset:0;border-radius:50%;border:6px solid #e5e7eb}
+.score-circle.high::before{border-color:#059669}.score-circle.mid::before{border-color:#2563eb}.score-circle.low::before{border-color:#d97706}
+.score-num{font-size:52px;font-weight:900;line-height:1}
+.score-num.high{color:#059669}.score-num.mid{color:#2563eb}.score-num.low{color:#d97706}
+.score-label{font-size:13px;color:#6b7280;font-weight:600}
+.level-badge{display:inline-block;padding:8px 24px;border-radius:40px;font-size:16px;font-weight:700;margin-bottom:16px}
+.level-badge.high{background:rgba(5,150,105,0.1);color:#059669}
+.level-badge.mid{background:rgba(37,99,235,0.1);color:#2563eb}
+.level-badge.low{background:rgba(217,119,6,0.1);color:#d97706}
+.result-desc{font-size:15px;color:#374151;line-height:1.7;max-width:500px;margin:0 auto 28px}
+.strengths-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;margin-bottom:28px}
+.str-card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px}
+.str-card h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.str-card p{font-size:12px;color:#6b7280}
+.str-card.strong h4{color:#059669}.str-card.improve h4{color:#d97706}
+.email-gate{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:32px;margin:24px 0;text-align:center}
+.email-gate h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.email-gate p{color:#6b7280;font-size:13px;margin-bottom:16px}
+.email-row{display:flex;gap:8px;max-width:400px;margin:0 auto}
+.email-row input{flex:1;padding:12px 16px;border:1px solid #d1d5de;border-radius:8px;font-size:14px;font-family:inherit}
+.email-row input:focus{outline:none;border-color:#2563eb}
+.cta-section{margin-top:32px;text-align:center}
+.btn-cta{background:linear-gradient(135deg,#2563eb,#059669);color:#fff;padding:16px 40px;border-radius:10px;font-size:16px;font-weight:700;border:none;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block}
+.btn-cta:hover{opacity:0.9}
+.share-row{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.btn-share{padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-linkedin{background:#0077b5;color:#fff}
+.btn-twitter{background:#1da1f2;color:#fff}
+.btn-copy{background:#fff;border:1px solid #d1d5de;color:#374151}
+.hidden{display:none}
+@media(max-width:600px){.header h1{font-size:24px}.strengths-grid{grid-template-columns:1fr}.email-row{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<div style="margin-bottom:12px"><a href="/" style="text-decoration:none;color:#2563eb;font-weight:600;font-size:14px">🎓 Prompt AI Academy</a></div>
+<h1>AI Communication Assessment</h1>
+<p>Discover your AI Communication Score in 2 minutes — free</p>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+<div id="quiz-area"></div>
+<div id="results-area" class="hidden"></div>
+</div>
+
+<script>
+const questions=[
+{q:"When you ask AI for help with a task, how much context do you typically provide?",opts:["I just describe what I want in a few words","I give a sentence or two of context","I include background, audience, and desired format","I provide role, context, examples, constraints, and success criteria"],scores:[1,2,3,4]},
+{q:"When AI gives you a response that's not quite right, what do you do?",opts:["Start over with a completely new prompt","Ask it to 'try again' or 'do better'","Identify the specific part that's wrong and ask for a targeted revision","Explain what worked, what didn't, and provide examples of what I want"],scores:[1,2,3,4]},
+{q:"How do you typically structure a complex request to AI?",opts:["Write everything in one long paragraph","Break it into a few sentences","Use clear sections with headers or numbered steps","Create a structured brief with role, task, format, constraints, and examples"],scores:[1,2,3,4]},
+{q:"When AI needs to produce content in a specific style or tone, how do you communicate that?",opts:["I don't usually specify tone","I say 'make it professional' or 'make it casual'","I describe the tone and provide one example","I provide multiple examples, specify the audience, and explain the emotional impact I want"],scores:[1,2,3,4]},
+{q:"How do you handle a multi-step project with AI?",opts:["Ask for everything at once and hope for the best","Break it into 2-3 big chunks","Plan a sequence of prompts, each building on the last","Design a workflow with checkpoints, reviews, and iteration loops"],scores:[1,2,3,4]},
+{q:"When you need AI to analyze data or a document, what do you provide?",opts:["Just the file and 'analyze this'","The file and a general question","The file, specific questions, and the format I want the analysis in","The file, analysis framework, output format, audience, and what decisions will be made from it"],scores:[1,2,3,4]},
+{q:"How often do you give AI a specific role or persona to adopt?",opts:["Never — I didn't know you could do that","Rarely — maybe once or twice","Sometimes — when the task calls for expertise","Almost always — I define the role, expertise level, and perspective"],scores:[1,2,3,4]},
+{q:"When you receive AI output, how do you evaluate it?",opts:["If it looks reasonable, I use it as-is","I skim it and make a few edits","I review against my original requirements and refine","I evaluate against specific criteria, test edge cases, and iterate until it exceeds my expectations"],scores:[1,2,3,4]},
+{q:"How would you describe your approach to learning AI tools?",opts:["I use them when I need to but haven't invested in learning","I've watched a few tutorials or read some tips","I regularly practice and try new techniques","I systematically study prompting frameworks and apply them across different tools"],scores:[1,2,3,4]},
+{q:"If a colleague asked you to explain how to get great results from AI, what would you say?",opts:["Just try different things until something works","Be clear about what you want","Learn the basics of prompt structure and always iterate","I could teach a structured framework covering context, specificity, examples, constraints, and iterative refinement"],scores:[1,2,3,4]}
+];
+
+let current=0;let answers=[];
+const levels=[
+{min:0,max:12,name:'Beginner',emoji:'🌱',cls:'low',desc:'You\'re at the starting line — and that\'s exactly where every expert began. Your prompts are general and you\'re leaving a lot of AI capability on the table. The great news? Small improvements in how you communicate with AI will produce dramatic results.'},
+{min:13,max:22,name:'Developing',emoji:'📈',cls:'low',desc:'You\'re beyond the basics but haven\'t yet discovered the frameworks that separate casual users from power users. You know AI can do more — you just need the structure to unlock it.'},
+{min:23,max:32,name:'Proficient',emoji:'⚡',cls:'mid',desc:'You\'re ahead of most AI users. You provide context, iterate on results, and understand that specificity matters. To reach the next level, focus on structured frameworks, role-setting, and multi-step workflows.'},
+{min:33,max:37,name:'Advanced',emoji:'🔥',cls:'mid',desc:'You\'re in the top 15% of AI communicators. You use structured prompts, iterate strategically, and understand how to get consistent results. The Expert level requires mastering edge cases, building reusable systems, and teaching others.'},
+{min:38,max:40,name:'Expert',emoji:'👑',cls:'high',desc:'You\'re in the top 5%. You treat AI as a true partner, providing comprehensive context, using advanced frameworks, and systematically refining outputs. You could teach others — and you should.'}
+];
+
+function getLevel(s){return levels.find(l=>s>=l.min&&s<=l.max)||levels[0]}
+
+function render(){
+  const area=document.getElementById('quiz-area');
+  const q=questions[current];
+  document.getElementById('progress').style.width=((current/questions.length)*100)+'%';
+  let h=`<div class="question-card"><div class="q-number">Question ${current+1} of ${questions.length}</div><div class="q-text">${q.q}</div><div class="options">`;
+  q.opts.forEach((o,i)=>{
+    const sel=answers[current]===i?'selected':'';
+    h+=`<div class="option ${sel}" onclick="selectOpt(${i})"><span class="option-letter">${String.fromCharCode(65+i)}</span><span>${o}</span></div>`;
+  });
+  h+=`</div></div><div class="nav-btns">`;
+  if(current>0)h+=`<button class="btn btn-back" onclick="prev()">← Back</button>`;else h+=`<div></div>`;
+  if(current<questions.length-1)h+=`<button class="btn btn-next" onclick="next()" ${answers[current]===undefined?'disabled':''}>Next →</button>`;
+  else h+=`<button class="btn btn-next" onclick="showResults()" ${answers[current]===undefined?'disabled':''}>See My Score →</button>`;
+  h+=`</div>`;
+  area.innerHTML=h;
+}
+
+function selectOpt(i){answers[current]=i;render()}
+function next(){if(answers[current]!==undefined){current++;render()}}
+function prev(){if(current>0){current--;render()}}
+
+function showResults(){
+  if(answers[current]===undefined)return;
+  document.getElementById('progress').style.width='100%';
+  const total=answers.reduce((s,a,i)=>s+questions[i].scores[a],0);
+  const pct=Math.round((total/40)*100);
+  const level=getLevel(total);
+
+  // Identify strengths and weaknesses
+  const scored=answers.map((a,i)=>({q:i,score:questions[i].scores[a],text:questions[i].q}));
+  const strengths=scored.filter(s=>s.score>=3).slice(0,2);
+  const improvements=scored.filter(s=>s.score<=2).slice(0,2);
+
+  document.getElementById('quiz-area').classList.add('hidden');
+  const r=document.getElementById('results-area');
+  r.classList.remove('hidden');
+
+  let h=`<div class="results"><div class="score-circle ${level.cls}"><div class="score-num ${level.cls}">${pct}</div><div class="score-label">out of 100</div></div>`;
+  h+=`<div class="level-badge ${level.cls}">${level.emoji} ${level.name} Communicator</div>`;
+  h+=`<p class="result-desc">${level.desc}</p>`;
+
+  if(strengths.length||improvements.length){
+    h+=`<div class="strengths-grid">`;
+    strengths.forEach(s=>{h+=`<div class="str-card strong"><h4>💪 Strength</h4><p>${s.text.substring(0,60)}...</p></div>`});
+    improvements.forEach(s=>{h+=`<div class="str-card improve"><h4>🎯 Opportunity</h4><p>${s.text.substring(0,60)}...</p></div>`});
+    h+=`</div>`;
+  }
+
+  h+=`<div class="email-gate"><h3>Get Your Personalized Improvement Plan</h3><p>Enter your email to receive a detailed breakdown of your results and a custom learning path.</p><div class="email-row"><input type="email" id="assess-email" placeholder="you@company.com"><button class="btn btn-next" onclick="captureEmail()">Send My Plan</button></div><div id="email-msg" style="margin-top:8px;font-size:12px"></div></div>`;
+
+  h+=`<div class="share-row"><a class="btn-share btn-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.promptaiacademy.com/assessment')}" target="_blank">🔗 Share on LinkedIn</a><button class="btn-share btn-copy" onclick="copyScore()">📋 Copy Score</button></div>`;
+
+  h+=`<div class="cta-section"><h3 style="margin-bottom:8px">Ready to improve your score?</h3><p style="color:#6b7280;margin-bottom:16px;font-size:14px">Our free course takes you from ${level.name} to Expert with live AI coaching.</p><a href="/academy" class="btn-cta">Start Free Training →</a></div>`;
+
+  h+=`</div>`;
+  r.innerHTML=h;
+
+  // Track in GA
+  gtag('event','assessment_complete',{score:pct,level:level.name});
+}
+
+async function captureEmail(){
+  const email=document.getElementById('assess-email').value;
+  const msg=document.getElementById('email-msg');
+  if(!email||!email.includes('@')){msg.textContent='Please enter a valid email.';msg.style.color='#dc2626';return}
+  try{
+    await fetch('/api/email-capture',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,source:'assessment',name:''})});
+    msg.textContent='✅ Sent! Check your inbox.';msg.style.color='#059669';
+    gtag('event','assessment_email_capture',{source:'assessment'});
+  }catch(e){msg.textContent='Something went wrong. Try again.';msg.style.color='#dc2626'}
+}
+
+function copyScore(){
+  const total=answers.reduce((s,a,i)=>s+questions[i].scores[a],0);
+  const pct=Math.round((total/40)*100);
+  const level=getLevel(total);
+  const text=`I scored ${pct}/100 on the AI Communication Assessment — I'm a "${level.name} Communicator." Think you can beat me?\n\nTake the free assessment: https://www.promptaiacademy.com/assessment`;
+  navigator.clipboard.writeText(text).then(()=>alert('Score copied! Paste it anywhere.'));
+}
+
+render();
+</script>
+</body>
+</html>
