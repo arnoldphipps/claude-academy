@@ -5,6 +5,8 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
+const Stripe = require('stripe');
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,7 +27,10 @@ app.set('trust proxy', 1);
 // Security
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
-app.use(express.json({ limit: '50kb' }));
+app.use((req, res, next) => {
+  if (req.path === '/api/webhook/stripe') return next();
+  express.json({ limit: '50kb' })(req, res, next);
+});
 
 // Rate limiting
 const apiLimiter = rateLimit({
@@ -83,7 +88,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     grading: !!ANTHROPIC_API_KEY,
     database: !!supabase,
-    version: '2.6.0'
+    version: '2.7.0'
   });
 });
 
@@ -1057,6 +1062,108 @@ app.post('/api/generate-challenge', apiLimiter, async (req, res) => {
   } catch (err) {
     console.error('Challenge error:', err);
     res.status(500).json({ error: 'Failed to generate challenge.' });
+  }
+});
+
+// ========================================
+// STRIPE PAYMENTS
+// ========================================
+const STRIPE_PRICES = {
+  pro: { name: 'Pro Monthly', price: 2900, interval: 'month' },
+  team: { name: 'Team Monthly (per seat)', price: 1900, interval: 'month' }
+};
+
+app.post('/api/checkout', authMiddleware, async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Payments not configured.' });
+  const { plan } = req.body;
+  const priceInfo = STRIPE_PRICES[plan];
+  if (!priceInfo) return res.status(400).json({ error: 'Invalid plan.' });
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      customer_email: req.user.email,
+      metadata: { user_id: req.user.id, plan },
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: { name: priceInfo.name, description: 'Prompt AI Academy - ' + priceInfo.name },
+          unit_amount: priceInfo.price,
+          recurring: { interval: priceInfo.interval }
+        },
+        quantity: 1
+      }],
+      success_url: 'https://www.promptaiacademy.com/academy?payment=success',
+      cancel_url: 'https://www.promptaiacademy.com/academy?payment=cancelled',
+      allow_promotion_codes: true
+    });
+    res.json({ url: session.url, sessionId: session.id });
+  } catch (err) {
+    console.error('Checkout error:', err);
+    res.status(500).json({ error: 'Failed to create checkout session.' });
+  }
+});
+
+app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) return res.status(503).send();
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  
+  try {
+    let event;
+    if (webhookSecret) {
+      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    } else {
+      event = JSON.parse(req.body);
+    }
+
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      const userId = session.metadata?.user_id;
+      const plan = session.metadata?.plan || 'pro';
+      
+      if (userId && supabase) {
+        await supabase.from('profiles').update({
+          plan: plan,
+          stripe_customer_id: session.customer,
+          subscription_status: 'active',
+          subscription_updated_at: new Date().toISOString()
+        }).eq('id', userId);
+        console.log('Subscription activated for user:', userId, 'plan:', plan);
+      }
+    }
+
+    if (event.type === 'customer.subscription.deleted') {
+      const subscription = event.data.object;
+      if (supabase) {
+        await supabase.from('profiles').update({
+          plan: 'free',
+          subscription_status: 'cancelled',
+          subscription_updated_at: new Date().toISOString()
+        }).eq('stripe_customer_id', subscription.customer);
+      }
+    }
+
+    res.json({ received: true });
+  } catch (err) {
+    console.error('Webhook error:', err);
+    res.status(400).send('Webhook error');
+  }
+});
+
+app.get('/api/subscription', authMiddleware, async (req, res) => {
+  try {
+    const { data: profile } = await supabase.from('profiles')
+      .select('plan, subscription_status, stripe_customer_id')
+      .eq('id', req.user.id).single();
+    res.json({
+      plan: profile?.plan || 'free',
+      status: profile?.subscription_status || 'none',
+      hasAccess: ['pro', 'team', 'admin'].includes(profile?.plan) || profile?.role === 'admin'
+    });
+  } catch (err) {
+    res.json({ plan: 'free', status: 'none', hasAccess: false });
   }
 });
 
