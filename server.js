@@ -953,7 +953,7 @@ app.post('/api/grade', apiLimiter, optionalAuth, async (req, res) => {
   if (student_work.length > 5000) {
     return res.status(400).json({ error: 'Submission too long.' });
   }
-  const systemPrompt = `You are Professor Claude, an expert AI tutor grading a prompt engineering exercise. Be warm but rigorous. Respond ONLY with JSON (no markdown fences):\n{"score":<0-100>,"rubric_results":[true/false per rubric item],"overall_feedback":"2-3 sentences","strengths":["..."],"improvements":["..."],"passing":<true if score>=70>}`;
+  const systemPrompt = `You are Professor Claude, an expert AI tutor grading a prompt engineering exercise. Be warm but rigorous. Respond ONLY with JSON (no markdown fences):\n{"score":<0-100>,"rubric_results":[true/false per rubric item],"overall_feedback":"2-3 sentences","strengths":["..."],"improvements":["..."],"passing":<true if score>=70>,"communication_tip":"One sentence connecting this AI communication skill to a real-world professional communication scenario — show the student how this skill applies to emails, meetings, presentations, or leadership."}`;
   const userMsg = `CHALLENGE:\n${challenge_task}\n\n${challenge_weak ? 'TRANSFORM: "' + challenge_weak + '"\n\n' : ''}RUBRIC:\n${rubric.map((r, i) => (i + 1) + '. ' + r).join('\n')}\n\nSUBMISSION:\n---\n${student_work}\n---`;
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
