@@ -12,11 +12,11 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Outfit',sans-serif;background:#f5f7fa;color:#111827;min-height:100vh}
-.container{max-width:680px;margin:0 auto;padding:32px 20px}
-.header{text-align:center;margin-bottom:40px}
+.container{max-width:680px;margin:0 auto;padding:20px 20px}
+.header{text-align:center;margin-bottom:16px}
 .header h1{font-size:32px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,#2563eb,#059669);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .header p{color:#6b7280;font-size:15px}
-.progress-bar{width:100%;height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:32px;overflow:hidden}
+.progress-bar{width:100%;height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:16px;overflow:hidden}
 .progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#059669);border-radius:3px;transition:width 0.4s ease}
 .question-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:32px;margin-bottom:24px;box-shadow:0 4px 16px rgba(0,0,0,0.04)}
 .q-number{font-size:12px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
@@ -130,18 +130,18 @@ function getLevel(s){return levels.find(l=>s>=l.min&&s<=l.max)||levels[0]}
 let started=false;
 function renderIntro(){
   const area=document.getElementById('quiz-area');
-  area.innerHTML=`<div style="text-align:center;padding:20px 0">
-<div style="font-size:56px;margin-bottom:16px">🎯</div>
-<h2 style="font-size:24px;font-weight:800;margin-bottom:12px">Discover Your AI Communication Level</h2>
-<p style="color:#374151;font-size:15px;line-height:1.7;max-width:480px;margin:0 auto 20px">In just 2 minutes, this assessment will reveal:</p>
-<div style="text-align:left;max-width:400px;margin:0 auto 24px">
-<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:20px">📊</span><span style="font-size:14px;color:#374151"><strong>Your AI Communication Score</strong> — ranked from Explorer to Expert</span></div>
-<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:20px">💪</span><span style="font-size:14px;color:#374151"><strong>Your strengths</strong> — what you're already doing well</span></div>
-<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:20px">🎯</span><span style="font-size:14px;color:#374151"><strong>Your opportunities</strong> — exactly where you can level up</span></div>
-<div style="display:flex;align-items:center;gap:12px;padding:10px 0"><span style="font-size:20px">🗺️</span><span style="font-size:14px;color:#374151"><strong>Your learning path</strong> — personalized module recommendations</span></div>
+  area.innerHTML=`<div style="text-align:center;padding:8px 0">
+<div style="font-size:40px;margin-bottom:8px">🎯</div>
+<h2 style="font-size:22px;font-weight:800;margin-bottom:8px">Discover Your AI Communication Level</h2>
+<p style="color:#374151;font-size:14px;margin:0 auto 14px">In just 2 minutes, this assessment will reveal:</p>
+<div style="text-align:left;max-width:420px;margin:0 auto 16px">
+<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:18px">📊</span><span style="font-size:13px;color:#374151"><strong>Your AI Communication Score</strong> — ranked from Explorer to Expert</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:18px">💪</span><span style="font-size:13px;color:#374151"><strong>Your strengths</strong> — what you're already doing well</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:18px">🎯</span><span style="font-size:13px;color:#374151"><strong>Your opportunities</strong> — exactly where you can level up</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:7px 0"><span style="font-size:18px">🗺️</span><span style="font-size:13px;color:#374151"><strong>Your learning path</strong> — personalized module recommendations</span></div>
 </div>
-<p style="color:#6b7280;font-size:13px;margin-bottom:24px">10 questions · No sign-up required · 100% free</p>
-<button class="btn btn-next" onclick="started=true;render()" style="padding:16px 40px;font-size:16px;font-weight:700">Let's Get Started →</button>
+<p style="color:#111827;font-size:15px;font-weight:600;margin-bottom:18px">10 questions · No sign-up required · 100% free</p>
+<button class="btn btn-next" onclick="started=true;render()" style="padding:16px 48px;font-size:16px;font-weight:700">Let\'s Get Started →</button>
 </div>`;
 }
 function render(){
