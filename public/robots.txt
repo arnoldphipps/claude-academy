@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Sitemap: https://www.promptaiacademy.com/sitemap.xml
+
+Disallow: /api/
+Disallow: /dashboard
