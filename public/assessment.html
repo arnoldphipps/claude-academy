@@ -118,10 +118,10 @@ const questions=[
 
 let current=0;let answers=[];
 const levels=[
-{min:0,max:12,name:'Beginner',emoji:'🌱',cls:'low',desc:'You\'re at the starting line — and that\'s exactly where every expert began. Your prompts are general and you\'re leaving a lot of AI capability on the table. The great news? Small improvements in how you communicate with AI will produce dramatic results.'},
-{min:13,max:22,name:'Developing',emoji:'📈',cls:'low',desc:'You\'re beyond the basics but haven\'t yet discovered the frameworks that separate casual users from power users. You know AI can do more — you just need the structure to unlock it.'},
-{min:23,max:32,name:'Proficient',emoji:'⚡',cls:'mid',desc:'You\'re ahead of most AI users. You provide context, iterate on results, and understand that specificity matters. To reach the next level, focus on structured frameworks, role-setting, and multi-step workflows.'},
-{min:33,max:37,name:'Advanced',emoji:'🔥',cls:'mid',desc:'You\'re in the top 15% of AI communicators. You use structured prompts, iterate strategically, and understand how to get consistent results. The Expert level requires mastering edge cases, building reusable systems, and teaching others.'},
+{min:0,max:12,name:'Explorer',emoji:'🌱',cls:'low',desc:'You just discovered something most people never find out: there\'s a massive gap between how you use AI now and what\'s possible. That gap is your biggest competitive advantage — because now you can close it. Most professionals never even take this step.'},
+{min:13,max:22,name:'Rising',emoji:'📈',cls:'low',desc:'You\'re already ahead of the majority of AI users. You have the instincts — now you need the frameworks. The difference between a 55 and an 85 isn\'t talent, it\'s structure. And structure can be learned in hours, not months.'},
+{min:23,max:32,name:'Proficient',emoji:'⚡',cls:'mid',desc:'You\'re in the top third of AI communicators. You provide context, iterate on results, and understand that specificity matters. The jump from Proficient to Advanced is where the real magic happens — and it\'s closer than you think.'},
+{min:33,max:37,name:'Advanced',emoji:'🔥',cls:'mid',desc:'You\'re in the top 15% of AI communicators. You use structured prompts, iterate strategically, and get consistent results. You\'re the person your colleagues ask for help. The Expert level is within reach.'},
 {min:38,max:40,name:'Expert',emoji:'👑',cls:'high',desc:'You\'re in the top 5%. You treat AI as a true partner, providing comprehensive context, using advanced frameworks, and systematically refining outputs. You could teach others — and you should.'}
 ];
 
@@ -166,7 +166,8 @@ function showResults(){
 
   let h=`<div class="results"><div class="score-circle ${level.cls}"><div class="score-num ${level.cls}">${pct}</div><div class="score-label">out of 100</div></div>`;
   h+=`<div class="level-badge ${level.cls}">${level.emoji} ${level.name} Communicator</div>`;
-  h+=`<p class="result-desc">${level.desc}</p>`;
+  h+=`<p style="font-size:13px;color:#6b7280;margin-bottom:8px">${pct>=80?'You\'re among the best AI communicators in the world.':pct>=60?'You\'re ahead of most professionals — structured training will take you to the top.':'Most professionals score between 40-60. Now that you know your starting point, imagine where you\'ll be after 12 lessons with a personal AI coach.'}</p>`;
+h+=`<p class="result-desc">${level.desc}</p>`;
 
   if(strengths.length||improvements.length){
     h+=`<div class="strengths-grid">`;
@@ -187,7 +188,7 @@ recs.forEach(r=>{h+=`<div style="display:flex;gap:12px;align-items:flex-start;pa
 h+=`</div>`;
 h+=`<div class="email-gate"><h3>Get Your Personalized Improvement Plan</h3><p>Enter your email to receive a detailed breakdown of your results and a custom learning path.</p><div class="email-row"><input type="email" id="assess-email" placeholder="you@company.com"><button class="btn btn-next" onclick="captureEmail()">Send My Plan</button></div><div id="email-msg" style="margin-top:8px;font-size:12px"></div></div>`;
 
-  h+=`<div class="share-row"><a class="btn-share btn-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.promptaiacademy.com/assessment')}" target="_blank">🔗 Share on LinkedIn</a><button class="btn-share btn-copy" onclick="copyScore()">📋 Copy Score</button></div>`;
+  h+=`<div class="share-row"><a class="btn-share btn-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.promptaiacademy.com/assessment')}" target="_blank">${pct>=75?'🔗 Share My Score':'🔗 Challenge Your Network'}</a><button class="btn-share btn-copy" onclick="copyScore()">📋 Copy Score</button></div>`;
 
   h+=`<div class="cta-section"><h3 style="margin-bottom:8px">Ready to improve your score?</h3><p style="color:#6b7280;margin-bottom:16px;font-size:14px">Our free course takes you from ${level.name} to Expert with live AI coaching.</p><a href="/academy" class="btn-cta">Start Free Training →</a></div>`;
 
@@ -213,7 +214,7 @@ function copyScore(){
   const total=answers.reduce((s,a,i)=>s+questions[i].scores[a],0);
   const pct=Math.round((total/40)*100);
   const level=getLevel(total);
-  const text=`I scored ${pct}/100 on the AI Communication Assessment — I'm a "${level.name} Communicator." Think you can beat me?\n\nTake the free assessment: https://www.promptaiacademy.com/assessment`;
+  const text=pct>=75?`I scored ${pct}/100 on the AI Communication Assessment — I'm a "${level.name} Communicator." Think you can beat me?\n\nTake the free assessment: https://www.promptaiacademy.com/assessment`:`I just took the AI Communication Assessment and discovered exactly where I can level up my AI skills. Fascinating. Think you know how well you communicate with AI?\n\nTake the free 2-minute quiz: https://www.promptaiacademy.com/assessment`;
   navigator.clipboard.writeText(text).then(()=>alert('Score copied! Paste it anywhere.'));
 }
 
