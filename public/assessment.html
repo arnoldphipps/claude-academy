@@ -214,7 +214,9 @@ function copyScore(){
   const total=answers.reduce((s,a,i)=>s+questions[i].scores[a],0);
   const pct=Math.round((total/40)*100);
   const level=getLevel(total);
-  const text=pct>=75?`I scored ${pct}/100 on the AI Communication Assessment — I'm a "${level.name} Communicator." Think you can beat me?\n\nTake the free assessment: https://www.promptaiacademy.com/assessment`:`I just took the AI Communication Assessment and discovered exactly where I can level up my AI skills. Fascinating. Think you know how well you communicate with AI?\n\nTake the free 2-minute quiz: https://www.promptaiacademy.com/assessment`;
+  const text=pct>=80?`I just discovered I'm in the top ${pct>=95?'5':'15'}% of AI communicators. Took a quick 2-minute assessment that scored how effectively I communicate with AI — and honestly, some of the questions made me rethink how I communicate with everyone, not just AI.\n\nCurious where you stand? It's free and takes 2 minutes:\nhttps://www.promptaiacademy.com/assessment`
+:pct>=60?`I just took a quick AI Communication Assessment — 2 minutes, 10 questions — and it showed me exactly where I'm strong and where I'm leaving AI capability on the table. Eye-opening.\n\nThe interesting part: the skills it measures aren't just about AI. They're the same skills that make you a better communicator with anyone.\n\nCurious where you'd score? Try it free:\nhttps://www.promptaiacademy.com/assessment`
+:`Just took a 2-minute AI Communication Assessment and discovered something fascinating — there's a massive gap between how most of us use AI and what's actually possible. The quiz pinpointed exactly where my biggest opportunities are.\n\nWhether you use AI daily or you're just getting started, this is worth 2 minutes. Curious where you'd score?\nhttps://www.promptaiacademy.com/assessment`;
   navigator.clipboard.writeText(text).then(()=>alert('Score copied! Paste it anywhere.'));
 }
 
