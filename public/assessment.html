@@ -175,7 +175,17 @@ function showResults(){
     h+=`</div>`;
   }
 
-  h+=`<div class="email-gate"><h3>Get Your Personalized Improvement Plan</h3><p>Enter your email to receive a detailed breakdown of your results and a custom learning path.</p><div class="email-row"><input type="email" id="assess-email" placeholder="you@company.com"><button class="btn btn-next" onclick="captureEmail()">Send My Plan</button></div><div id="email-msg" style="margin-top:8px;font-size:12px"></div></div>`;
+  // Personalized module recommendations
+const recs=[];
+if(scored.filter(s=>s.q<=2&&s.score<=2).length>0)recs.push({mod:'Module 1: Foundations',desc:'Master prompt frameworks, iteration techniques, and the mental models that separate beginners from power users.',emoji:'🧠'});
+if(scored.filter(s=>s.q>=3&&s.q<=5&&s.score<=2).length>0)recs.push({mod:'Module 2: Power Tools',desc:'Learn to handle real projects — data analysis, document creation, and research workflows.',emoji:'⚡'});
+if(scored.filter(s=>s.q>=6&&s.q<=7&&s.score<=2).length>0)recs.push({mod:'Module 3: Connected Ecosystem',desc:'Master integrations with email, project management, and browser automation.',emoji:'🔗'});
+if(scored.filter(s=>s.q>=8&&s.score<=2).length>0)recs.push({mod:'Module 4: Expert Techniques',desc:'Advanced patterns including chain-of-thought, building AI apps, and your personal AI operating system.',emoji:'🚀'});
+if(recs.length===0)recs.push({mod:'Module 4: Expert Techniques',desc:'You\'re already strong in the basics — challenge yourself with advanced patterns and AI app building.',emoji:'🚀'});
+h+=`<div style="text-align:left;margin:24px 0"><h3 style="text-align:center;margin-bottom:16px;font-size:16px;font-weight:700">Your Recommended Learning Path</h3>`;
+recs.forEach(r=>{h+=`<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:8px"><span style="font-size:24px;flex-shrink:0">${r.emoji}</span><div><div style="font-weight:700;font-size:14px;color:#111827">${r.mod}</div><div style="font-size:12px;color:#6b7280;margin-top:2px">${r.desc}</div></div></div>`});
+h+=`</div>`;
+h+=`<div class="email-gate"><h3>Get Your Personalized Improvement Plan</h3><p>Enter your email to receive a detailed breakdown of your results and a custom learning path.</p><div class="email-row"><input type="email" id="assess-email" placeholder="you@company.com"><button class="btn btn-next" onclick="captureEmail()">Send My Plan</button></div><div id="email-msg" style="margin-top:8px;font-size:12px"></div></div>`;
 
   h+=`<div class="share-row"><a class="btn-share btn-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.promptaiacademy.com/assessment')}" target="_blank">🔗 Share on LinkedIn</a><button class="btn-share btn-copy" onclick="copyScore()">📋 Copy Score</button></div>`;
 
