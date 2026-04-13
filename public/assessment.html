@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Communication Assessment — How Well Do You Communicate with AI?</title>
 <meta property="og:title" content="AI Communication Assessment — How Well Do You Talk to AI?">
-<meta property="og:description" content="Take this free 2-minute assessment to discover your AI Communication Score. Can you beat my score?">
+<meta property="og:description" content="Take this free 2-minute AI Communication Assessment. Discover where your communication strengths are and where you can level up — with AI and with everyone you work with.">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -127,7 +127,25 @@ const levels=[
 
 function getLevel(s){return levels.find(l=>s>=l.min&&s<=l.max)||levels[0]}
 
+let started=false;
+function renderIntro(){
+  const area=document.getElementById('quiz-area');
+  area.innerHTML=`<div style="text-align:center;padding:20px 0">
+<div style="font-size:56px;margin-bottom:16px">🎯</div>
+<h2 style="font-size:24px;font-weight:800;margin-bottom:12px">Discover Your AI Communication Level</h2>
+<p style="color:#374151;font-size:15px;line-height:1.7;max-width:480px;margin:0 auto 20px">In just 2 minutes, this assessment will reveal:</p>
+<div style="text-align:left;max-width:400px;margin:0 auto 24px">
+<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:20px">📊</span><span style="font-size:14px;color:#374151"><strong>Your AI Communication Score</strong> — ranked from Explorer to Expert</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:20px">💪</span><span style="font-size:14px;color:#374151"><strong>Your strengths</strong> — what you're already doing well</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:20px">🎯</span><span style="font-size:14px;color:#374151"><strong>Your opportunities</strong> — exactly where you can level up</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:10px 0"><span style="font-size:20px">🗺️</span><span style="font-size:14px;color:#374151"><strong>Your learning path</strong> — personalized module recommendations</span></div>
+</div>
+<p style="color:#6b7280;font-size:13px;margin-bottom:24px">10 questions · No sign-up required · 100% free</p>
+<button class="btn btn-next" onclick="started=true;render()" style="padding:16px 40px;font-size:16px;font-weight:700">Let's Get Started →</button>
+</div>`;
+}
 function render(){
+  if(!started){renderIntro();return}
   const area=document.getElementById('quiz-area');
   const q=questions[current];
   document.getElementById('progress').style.width=((current/questions.length)*100)+'%';
@@ -186,9 +204,10 @@ if(recs.length===0)recs.push({mod:'Module 4: Expert Techniques',desc:'You\'re al
 h+=`<div style="text-align:left;margin:24px 0"><h3 style="text-align:center;margin-bottom:16px;font-size:16px;font-weight:700">Your Recommended Learning Path</h3>`;
 recs.forEach(r=>{h+=`<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 16px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;margin-bottom:8px"><span style="font-size:24px;flex-shrink:0">${r.emoji}</span><div><div style="font-weight:700;font-size:14px;color:#111827">${r.mod}</div><div style="font-size:12px;color:#6b7280;margin-top:2px">${r.desc}</div></div></div>`});
 h+=`</div>`;
-h+=`<div class="email-gate"><h3>Get Your Personalized Improvement Plan</h3><p>Enter your email to receive a detailed breakdown of your results and a custom learning path.</p><div class="email-row"><input type="email" id="assess-email" placeholder="you@company.com"><button class="btn btn-next" onclick="captureEmail()">Send My Plan</button></div><div id="email-msg" style="margin-top:8px;font-size:12px"></div></div>`;
+h+=`<div style="text-align:center;margin:20px 0"><a href="/academy" class="btn-cta" style="display:inline-block;padding:14px 36px;font-size:15px">Start Free Training →</a><p style="font-size:11px;color:#9ca3af;margin-top:8px">3 lessons free · No credit card required</p></div>`;
+h+=`<div class="email-gate">`<h3>Get Your Personalized Improvement Plan</h3><p>Enter your email to receive a detailed breakdown of your results and a custom learning path.</p><div class="email-row"><input type="email" id="assess-email" placeholder="you@company.com"><button class="btn btn-next" onclick="captureEmail()">Send My Plan</button></div><div id="email-msg" style="margin-top:8px;font-size:12px"></div></div>`;
 
-  h+=`<div class="share-row"><a class="btn-share btn-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.promptaiacademy.com/assessment')}" target="_blank">${pct>=75?'🔗 Share My Score':'🔗 Challenge Your Network'}</a><button class="btn-share btn-copy" onclick="copyScore()">📋 Copy Score</button></div>`;
+  h+=`<div class="share-row"><a class="btn-share btn-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.promptaiacademy.com/assessment')}" target="_blank">${pct>=75?'🔗 Share My Discovery':'🔗 Challenge Your Network'}</a><button class="btn-share btn-copy" onclick="copyScore()">📋 Copy Score</button></div>`;
 
   h+=`<div class="cta-section"><h3 style="margin-bottom:8px">Ready to improve your score?</h3><p style="color:#6b7280;margin-bottom:16px;font-size:14px">Our free course takes you from ${level.name} to Expert with live AI coaching.</p><a href="/academy" class="btn-cta">Start Free Training →</a></div>`;
 

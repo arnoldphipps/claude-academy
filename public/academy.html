@@ -245,7 +245,7 @@ async function doGrade(lid){
     if(res.passing)fb+='\n\n<strong style="color:var(--gn)">✅ Passing score! Complete the lesson when you\'re satisfied, or revise for a higher grade.</strong>';
     if(!res.passing)fb+='\n\n<strong style="color:var(--yw)">✏️ Use Revise & Resubmit below to improve your score!</strong>';
     S.tutor=fb;
-  }catch(e){console.error(e);S.tutor="Grading error — try again."}
+  }catch(e){console.error('Grade error:',e);S.tutor="<strong>⚠️ Grading is taking longer than expected.</strong>\n\nThis usually means Professor Claude is thinking hard about your submission. Please click Submit for Grading again — it typically works on the second try.\n\nIf the issue persists, check your internet connection and try again."}
   S.grading=false;renderAll();
 }
 async function doHelp(lid){
@@ -258,7 +258,7 @@ async function doHelp(lid){
     const r=await fetch('/api/help',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({challenge_task:active.task,challenge_weak:active.weak||null,rubric:active.rubric,student_work:w})});
     if(!r.ok)throw new Error('Error');
     const d=await r.json();S.tutor='💡 '+d.help;
-  }catch(e){S.tutor="Connection issue — try again."}
+  }catch(e){console.error('Help error:',e);S.tutor="<strong>⚠️ Professor Claude is temporarily busy.</strong>\n\nPlease try the Help button again in a moment. If the issue persists, try refreshing the page."}
   S.grading=false;renderAll();
 }
 async function genBonus(lid){
@@ -290,7 +290,7 @@ function debounceSave(k){clearTimeout(_saveTimers[k]);_saveTimers[k]=setTimeout(
 async function saveDraftToServer(k){const sess=localStorage.getItem('pai_session');if(!sess)return;try{const token=JSON.parse(sess).access_token;const mod=S.activeMod?.id||'';await fetch('/api/drafts',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({lesson_id:k,module_id:mod,answer:S.inputs[k]||''})});const hint=document.getElementById('save-hint');if(hint){hint.textContent='✓ Draft saved';hint.style.color='var(--gn)';setTimeout(()=>{hint.textContent='↕ Drag bottom-right corner to resize';hint.style.color=''},2000)}}catch(e){console.error('Draft save failed',e)}}
 async function loadDrafts(){const sess=localStorage.getItem('pai_session');if(!sess)return;try{const token=JSON.parse(sess).access_token;const r=await fetch('/api/drafts',{headers:{'Authorization':'Bearer '+token}});if(r.ok){const drafts=await r.json();Object.keys(drafts).forEach(k=>{if(drafts[k].answer)S.inputs[k]=drafts[k].answer});console.log('Loaded',Object.keys(drafts).length,'drafts')}}catch(e){console.error('Draft load failed',e)}}
 function compLes(lid){if(S.done.has(lid))return;const l=ML.flatMap(m=>m.lessons).find(x=>x.id===lid);const res=S.rubrics[lid];const earnedXp=res?.score?Math.round(res.score/10)*5:l.xp;S.done.add(lid);S.xp+=earnedXp;showCeleb(earnedXp);S.tutor=S.done.size===12?'🎉 <strong>Academy Complete! You are a Claude Master.</strong>':'<strong>+'+earnedXp+' XP!</strong> Pick your next lesson — or try a Bonus Challenge!';renderAll()}
-function reviseAnswer(lid){const el=document.getElementById('si-'+lid);if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'})}S.tutor='<strong>Review the feedback above</strong> and improve your answer. Focus on the areas marked for improvement. Resubmit when ready — let\'s see that score climb!';renderTutor()}
+function reviseAnswer(lid){S.tutor='<strong>✏️ Revise Mode!</strong> Review the feedback below, edit your answer, and click Submit for Grading again. Let\'s see that score climb!';renderTutor();setTimeout(()=>{const el=document.getElementById('si-'+lid);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>el.focus(),300)}else{console.error('Textarea not found for',lid);window.scrollTo({top:0,behavior:'smooth'})}},100)}
 function nextLesson(){const allLessons=ML.flatMap(m=>m.lessons);const curIdx=allLessons.findIndex(l=>l.id===S.activeLes?.id);if(curIdx>=0&&curIdx<allLessons.length-1){const next=allLessons[curIdx+1];const mod=ML.find(m=>m.lessons.some(l=>l.id===next.id));S.inputs[next.id]='';delete S.rubrics[next.id];selLes(mod.id,next.id)}else{S.activeLes=null;S.tutor='You\'ve reached the end! Review any lesson or try Bonus Challenges.';renderAll()}}
 function showCeleb(x){const el=document.getElementById('celebration');document.getElementById('celeb-text').textContent='🎉 +'+x+' XP earned!';el.style.display='flex';el.style.animation='none';el.offsetHeight;el.style.animation='celebA 3s ease forwards';setTimeout(()=>el.style.display='none',3100)}
 
