@@ -90,10 +90,20 @@ footer{padding:40px 24px;border-top:1px solid var(--bd);text-align:center;color:
 footer a{color:var(--mt)}
 
 @media(max-width:768px){
-  nav{padding:14px 20px}.nav-links{gap:16px}
+  nav{padding:14px 20px;flex-wrap:wrap}.nav-links{gap:12px;flex-wrap:wrap;justify-content:center}
+  .nav-links a{font-size:12px}
   .how-grid,.feat-grid{grid-template-columns:1fr}.mod-grid{grid-template-columns:1fr}
   .hero-stats{flex-direction:column;gap:20px}
   .proof-inner{flex-direction:column;text-align:center}
+  h1{font-size:32px!important}
+  details{padding:16px 18px!important}
+  details summary{font-size:14px!important}
+  details p{font-size:13px!important}
+}
+@media(max-width:480px){
+  .nav-links a:not(.nav-cta){display:none}
+  h1{font-size:26px!important}
+  section{padding:48px 16px!important}
 }
 </style>
 </head>
