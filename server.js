@@ -315,6 +315,22 @@ app.get('/api/certificate/:moduleId', authMiddleware, async (req, res) => {
 });
 
 
+
+// ========================================
+// PUBLIC STATS (no auth required)
+// ========================================
+app.get('/api/stats', async (req, res) => {
+  if (!supabase) return res.json({ users: 0, assessments: 0, grades: 0 });
+  try {
+    const { count: users } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+    const { count: assessments } = await supabase.from('email_captures').select('*', { count: 'exact', head: true }).eq('source', 'assessment');
+    const { count: grades } = await supabase.from('grades').select('*', { count: 'exact', head: true });
+    res.json({ users: users || 0, assessments: assessments || 0, grades: grades || 0 });
+  } catch (err) {
+    res.json({ users: 0, assessments: 0, grades: 0 });
+  }
+});
+
 // ========================================
 // WEEKLY LEADERBOARD
 // ========================================
