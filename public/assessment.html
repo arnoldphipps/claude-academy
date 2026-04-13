@@ -130,18 +130,18 @@ function getLevel(s){return levels.find(l=>s>=l.min&&s<=l.max)||levels[0]}
 let started=false;
 function renderIntro(){
   const area=document.getElementById('quiz-area');
-  area.innerHTML=`<div style="text-align:center;padding:8px 0">
-<div style="font-size:40px;margin-bottom:8px">🎯</div>
-<h2 style="font-size:22px;font-weight:800;margin-bottom:8px">Discover Your AI Communication Level</h2>
-<p style="color:#374151;font-size:14px;margin:0 auto 14px">In just 2 minutes, this assessment will reveal:</p>
-<div style="text-align:left;max-width:420px;margin:0 auto 16px">
-<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:18px">📊</span><span style="font-size:13px;color:#374151"><strong>Your AI Communication Score</strong> — ranked from Explorer to Expert</span></div>
-<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:18px">💪</span><span style="font-size:13px;color:#374151"><strong>Your strengths</strong> — what you're already doing well</span></div>
-<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:18px">🎯</span><span style="font-size:13px;color:#374151"><strong>Your opportunities</strong> — exactly where you can level up</span></div>
-<div style="display:flex;align-items:center;gap:10px;padding:7px 0"><span style="font-size:18px">🗺️</span><span style="font-size:13px;color:#374151"><strong>Your learning path</strong> — personalized module recommendations</span></div>
+  area.innerHTML=`<div style="text-align:center;padding:4px 0">
+<div style="font-size:36px;margin-bottom:4px">🎯</div>
+<h2 style="font-size:26px;font-weight:800;margin-bottom:6px">Discover Your AI Communication Level</h2>
+<p style="color:#111827;font-size:17px;font-weight:500;margin:0 auto 12px">In just 2 minutes, this assessment will reveal:</p>
+<div style="text-align:left;max-width:480px;margin:0 auto 14px">
+<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:22px">📊</span><span style="font-size:16px;color:#111827"><strong>Your AI Communication Score</strong> — ranked Explorer to Expert</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:22px">💪</span><span style="font-size:16px;color:#111827"><strong>Your strengths</strong> — what you're already doing well</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #e5e7eb"><span style="font-size:22px">🎯</span><span style="font-size:16px;color:#111827"><strong>Your opportunities</strong> — exactly where you can level up</span></div>
+<div style="display:flex;align-items:center;gap:12px;padding:8px 0"><span style="font-size:22px">🗺️</span><span style="font-size:16px;color:#111827"><strong>Your learning path</strong> — personalized recommendations</span></div>
 </div>
-<p style="color:#111827;font-size:15px;font-weight:600;margin-bottom:18px">10 questions · No sign-up required · 100% free</p>
-<button class="btn btn-next" onclick="started=true;render()" style="padding:16px 48px;font-size:16px;font-weight:700">Let\'s Get Started →</button>
+<p style="color:#111827;font-size:17px;font-weight:700;margin-bottom:16px">10 questions · No sign-up required · 100% free</p>
+<button class="btn btn-next" onclick="started=true;render()" style="padding:16px 52px;font-size:18px;font-weight:700">Let\'s Get Started →</button>
 </div>`;
 }
 function render(){
