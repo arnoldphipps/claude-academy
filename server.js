@@ -1153,25 +1153,40 @@ app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async
 
 app.get('/api/subscription', authMiddleware, async (req, res) => {
   try {
-    // Check Stripe directly for active subscriptions
+    // Method 1: Check Stripe directly for active subscriptions
     if (stripe && req.user.email) {
-      const customers = await stripe.customers.list({ email: req.user.email, limit: 1 });
-      if (customers.data.length > 0) {
-        const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, status: 'active', limit: 1 });
-        if (subs.data.length > 0) {
-          return res.json({ plan: 'pro', status: 'active', hasAccess: true });
+      try {
+        const customers = await stripe.customers.list({ email: req.user.email, limit: 1 });
+        if (customers.data.length > 0) {
+          const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, status: 'active', limit: 1 });
+          if (subs.data.length > 0) {
+            console.log('Subscription found via Stripe for:', req.user.email);
+            return res.json({ plan: 'pro', status: 'active', hasAccess: true });
+          }
+          // Also check for completed checkout sessions (in case subscription object differs)
+          const sessions = await stripe.checkout.sessions.list({ customer: customers.data[0].id, limit: 5 });
+          const paid = sessions.data.find(s => s.payment_status === 'paid');
+          if (paid) {
+            console.log('Paid session found via Stripe for:', req.user.email);
+            return res.json({ plan: 'pro', status: 'active', hasAccess: true });
+          }
         }
+      } catch(stripeErr) {
+        console.error('Stripe check failed:', stripeErr.message);
       }
     }
-    // Fallback: check database (if columns exist)
+    // Method 2: Check database using select *
     try {
       const { data: profile } = await supabase.from('profiles')
-        .select('plan, subscription_status')
+        .select('*')
         .eq('id', req.user.id).single();
       if (profile?.plan && profile.plan !== 'free') {
+        console.log('Pro plan found in database for:', req.user.email);
         return res.json({ plan: profile.plan, status: profile.subscription_status || 'active', hasAccess: true });
       }
-    } catch(e) { /* columns may not exist yet */ }
+    } catch(dbErr) {
+      console.error('DB plan check failed:', dbErr.message);
+    }
     res.json({ plan: 'free', status: 'none', hasAccess: false });
   } catch (err) {
     console.error('Subscription check error:', err);
@@ -1232,6 +1247,18 @@ app.get('/', (req, res) => {
 });
 
 // Start
+// Refresh Supabase PostgREST schema cache on startup
+if (supabase) {
+  supabase.rpc('notify_pgrst').catch(() => {
+    // Fallback: try raw query
+    supabase.from('profiles').select('plan').limit(1).then(() => {
+      console.log('Schema cache: plan column accessible');
+    }).catch(() => {
+      console.log('Schema cache: plan column not yet accessible - will use Stripe direct check');
+    });
+  });
+}
+
 app.listen(PORT, () => {
   console.log(`\n🎓 Prompt AI Academy running at http://localhost:${PORT}`);
   console.log(`   AI Grading: ${ANTHROPIC_API_KEY ? '✅ Active' : '❌ No API key'}`);
