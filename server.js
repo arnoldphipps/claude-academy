@@ -1124,12 +1124,11 @@ app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async
       const plan = session.metadata?.plan || 'pro';
       
       if (userId && supabase) {
-        await supabase.from('profiles').update({
-          plan: plan,
-          stripe_customer_id: session.customer,
-          subscription_status: 'active',
-          subscription_updated_at: new Date().toISOString()
-        }).eq('id', userId);
+        try {
+          await supabase.rpc('exec_sql', { query: `UPDATE profiles SET plan = '${plan}', stripe_customer_id = '${session.customer}', subscription_status = 'active', subscription_updated_at = NOW() WHERE id = '${userId}'` });
+        } catch(e) {
+          await supabase.from('profiles').update({ plan: plan }).eq('id', userId);
+        }
         console.log('Subscription activated for user:', userId, 'plan:', plan);
       }
     }
@@ -1168,22 +1167,24 @@ app.get('/api/subscription', authMiddleware, async (req, res) => {
 });
 
 
-// ADMIN: Manual plan upgrade (temporary - remove after webhook setup)
+// ADMIN: Manual plan upgrade (uses raw SQL to bypass schema cache)
 app.post('/api/admin/upgrade', async (req, res) => {
   if (!supabase) return res.status(503).json({ error: 'Database not configured.' });
   const { email, plan, admin_key } = req.body;
-  // Simple admin key check
   if (admin_key !== 'pai-admin-2026') return res.status(403).json({ error: 'Unauthorized' });
   try {
-    const { data: profiles } = await supabase.from('profiles').select('id, email').eq('email', email);
-    if (!profiles || profiles.length === 0) return res.status(404).json({ error: 'User not found' });
-    const { data, error } = await supabase.from('profiles').update({
-      plan: plan || 'pro',
-      subscription_status: 'active',
-      subscription_updated_at: new Date().toISOString()
-    }).eq('email', email);
-    if (error) return res.status(500).json({ error: error.message });
-    res.json({ success: true, message: `${email} upgraded to ${plan || 'pro'}` });
+    const { data, error } = await supabase.rpc('exec_sql', { 
+      query: `UPDATE profiles SET plan = '${plan || 'pro'}', subscription_status = 'active', subscription_updated_at = NOW() WHERE email = '${email}' RETURNING id, email, plan` 
+    });
+    if (error) {
+      // Fallback: try direct update
+      const { error: err2 } = await supabase.from('profiles').update({
+        plan: plan || 'pro'
+      }).eq('email', email);
+      if (err2) return res.status(500).json({ error: err2.message, fallback_error: true });
+      return res.json({ success: true, message: 'Upgraded via fallback', email });
+    }
+    res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
