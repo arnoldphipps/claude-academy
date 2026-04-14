@@ -1247,17 +1247,7 @@ app.get('/', (req, res) => {
 });
 
 // Start
-// Refresh Supabase PostgREST schema cache on startup
-if (supabase) {
-  supabase.rpc('notify_pgrst').catch(() => {
-    // Fallback: try raw query
-    supabase.from('profiles').select('plan').limit(1).then(() => {
-      console.log('Schema cache: plan column accessible');
-    }).catch(() => {
-      console.log('Schema cache: plan column not yet accessible - will use Stripe direct check');
-    });
-  });
-}
+// Schema cache refreshed via SQL NOTIFY - no startup code needed
 
 app.listen(PORT, () => {
   console.log(`\n🎓 Prompt AI Academy running at http://localhost:${PORT}`);
