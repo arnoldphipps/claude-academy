@@ -1153,15 +1153,28 @@ app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async
 
 app.get('/api/subscription', authMiddleware, async (req, res) => {
   try {
-    const { data: profile } = await supabase.from('profiles')
-      .select('plan, subscription_status, stripe_customer_id')
-      .eq('id', req.user.id).single();
-    res.json({
-      plan: profile?.plan || 'free',
-      status: profile?.subscription_status || 'none',
-      hasAccess: ['pro', 'team', 'admin'].includes(profile?.plan) || profile?.role === 'admin'
-    });
+    // Check Stripe directly for active subscriptions
+    if (stripe && req.user.email) {
+      const customers = await stripe.customers.list({ email: req.user.email, limit: 1 });
+      if (customers.data.length > 0) {
+        const subs = await stripe.subscriptions.list({ customer: customers.data[0].id, status: 'active', limit: 1 });
+        if (subs.data.length > 0) {
+          return res.json({ plan: 'pro', status: 'active', hasAccess: true });
+        }
+      }
+    }
+    // Fallback: check database (if columns exist)
+    try {
+      const { data: profile } = await supabase.from('profiles')
+        .select('plan, subscription_status')
+        .eq('id', req.user.id).single();
+      if (profile?.plan && profile.plan !== 'free') {
+        return res.json({ plan: profile.plan, status: profile.subscription_status || 'active', hasAccess: true });
+      }
+    } catch(e) { /* columns may not exist yet */ }
+    res.json({ plan: 'free', status: 'none', hasAccess: false });
   } catch (err) {
+    console.error('Subscription check error:', err);
     res.json({ plan: 'free', status: 'none', hasAccess: false });
   }
 });
