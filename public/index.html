@@ -107,6 +107,10 @@ footer a{color:var(--mt)}
 }
 @media(max-width:480px){
   .nav-links a:not(.nav-cta){display:none}
+  .nav-links.mobile-open a{display:block!important}
+  .nav-links.mobile-open{position:absolute;top:56px;left:0;right:0;background:rgba(6,7,11,.97);flex-direction:column;padding:16px 20px;gap:14px;border-bottom:1px solid var(--bd)}
+  .nav-links.mobile-open a{font-size:15px!important;padding:8px 0}
+  .hamburger{display:flex!important;font-size:24px;background:none;border:none;color:var(--tx);cursor:pointer;padding:4px 8px;order:-1}
   h1{font-size:26px!important}
   section{padding:48px 16px!important}
 }
@@ -116,6 +120,7 @@ footer a{color:var(--mt)}
 
 <nav>
   <div class="nav-logo">🎓 Prompt AI Academy</div>
+  <button class="hamburger" style="display:none" onclick="document.querySelector('.nav-links').classList.toggle('mobile-open');this.textContent=this.textContent==='☰'?'✕':'☰'" aria-label="Menu">☰</button>
   <div class="nav-links">
     <a href="#how">How It Works</a>
     <a href="#curriculum">Curriculum</a>
