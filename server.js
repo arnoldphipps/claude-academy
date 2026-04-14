@@ -1167,6 +1167,28 @@ app.get('/api/subscription', authMiddleware, async (req, res) => {
   }
 });
 
+
+// ADMIN: Manual plan upgrade (temporary - remove after webhook setup)
+app.post('/api/admin/upgrade', async (req, res) => {
+  if (!supabase) return res.status(503).json({ error: 'Database not configured.' });
+  const { email, plan, admin_key } = req.body;
+  // Simple admin key check
+  if (admin_key !== 'pai-admin-2026') return res.status(403).json({ error: 'Unauthorized' });
+  try {
+    const { data: profiles } = await supabase.from('profiles').select('id, email').eq('email', email);
+    if (!profiles || profiles.length === 0) return res.status(404).json({ error: 'User not found' });
+    const { data, error } = await supabase.from('profiles').update({
+      plan: plan || 'pro',
+      subscription_status: 'active',
+      subscription_updated_at: new Date().toISOString()
+    }).eq('email', email);
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ success: true, message: `${email} upgraded to ${plan || 'pro'}` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ========================================
 // ROUTES
 // ========================================
