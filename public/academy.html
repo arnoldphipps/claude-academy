@@ -199,7 +199,12 @@ button{font-family:inherit;cursor:pointer}button:active{transform:scale(.98)}
 .theme-toggle span.active{background:var(--ac);color:#fff}
 </style>
 </head>
-<body>
+<body data-theme="light">
+<script>
+// Restore saved theme immediately to prevent flash
+const savedTheme = localStorage.getItem('pai_theme') || 'light';
+document.body.setAttribute('data-theme', savedTheme);
+</script>
 <script>// Apply theme immediately to prevent flash
 const savedTheme=localStorage.getItem('pai_theme')||'light';document.body.setAttribute('data-theme',savedTheme);
 function toggleTheme(){const cur=document.body.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.body.setAttribute('data-theme',next);localStorage.setItem('pai_theme',next);renderSidebar()}
