@@ -207,7 +207,7 @@ h+=`</div>`;
 h+=`<div style="text-align:center;margin:20px 0"><a href="/academy" class="btn-cta" style="display:inline-block;padding:14px 36px;font-size:15px">Start Free Training →</a><p style="font-size:11px;color:#9ca3af;margin-top:8px">3 lessons free · No credit card required</p></div>`;
 h+=`<div class="email-gate"><h3>Get Your Personalized Improvement Plan</h3><p>Enter your email to receive a detailed breakdown of your results and a custom learning path.</p><div class="email-row"><input type="email" id="assess-email" placeholder="you@company.com"><button class="btn btn-next" onclick="captureEmail()">Send My Plan</button></div><div id="email-msg" style="margin-top:8px;font-size:12px"></div></div>`;
 
-  h+=`<div class="share-row"><a class="btn-share btn-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.promptaiacademy.com/assessment')}" target="_blank">${pct>=75?'🔗 Share My Discovery':'🔗 Challenge Your Network'}</a><button class="btn-share btn-copy" onclick="copyScore()">📋 Copy Score</button></div>`;
+  h+=`<div class="share-row"><a class="btn-share btn-linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://www.promptaiacademy.com/assessment')}" target="_blank">${pct>=75?'🔗 Share My Discovery':'🔗 Challenge Your Network'}</a><button class="btn-share btn-copy" onclick="shareResults()">📋 Share My Results</button></div>`;
 
   h+=`<div class="cta-section"><h3 style="margin-bottom:8px">Ready to improve your score?</h3><p style="color:#6b7280;margin-bottom:16px;font-size:14px">Our free course takes you from ${level.name} to Expert with live AI coaching.</p><a href="/academy" class="btn-cta">Start Free Training →</a></div>`;
 
@@ -229,14 +229,14 @@ async function captureEmail(){
   }catch(e){msg.textContent='Something went wrong. Try again.';msg.style.color='#dc2626'}
 }
 
-function copyScore(){
+function shareResults(){
   const total=answers.reduce((s,a,i)=>s+questions[i].scores[a],0);
   const pct=Math.round((total/40)*100);
   const level=getLevel(total);
   const text=pct>=80?`I scored ${pct} on the AI Communication Assessment — that puts me in the top ${pct>=95?'5':'15'}% of AI communicators. Took 2 minutes and it scored how effectively I communicate with AI — honestly, some of the questions made me rethink how I communicate with everyone, not just AI.\n\nCurious where you stand? It's free and takes 2 minutes:\nhttps://www.promptaiacademy.com/assessment`
 :pct>=60?`I scored ${pct} on the AI Communication Assessment — 2 minutes, 10 questions — and it showed me exactly where I'm strong and where I'm leaving AI capability on the table. Eye-opening.\n\nThe interesting part: the skills it measures aren't just about AI. They're the same skills that make you a better communicator with anyone.\n\nCurious where you'd score? Try it free:\nhttps://www.promptaiacademy.com/assessment`
 :`I just took a 2-minute AI Communication Assessment and discovered something fascinating — there's a massive gap between how most of us use AI and what's actually possible. The quiz pinpointed exactly where my biggest opportunities are.\n\nWhether you use AI daily or you're just getting started, this is worth 2 minutes. Curious where you'd score?\nhttps://www.promptaiacademy.com/assessment`;
-  navigator.clipboard.writeText(text).then(()=>alert('Score copied! Paste it anywhere.'));
+  navigator.clipboard.writeText(text).then(()=>alert('Copied! Paste it anywhere to share.'));
 }
 
 render();
