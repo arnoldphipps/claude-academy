@@ -126,23 +126,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <script>
-// Check if already logged in — show choice instead of auto-redirect
+// Check if already logged in — validate session first
 const session = localStorage.getItem('pai_session');
 const existingUser = localStorage.getItem('pai_user');
 if (session) {
   try {
     const s = JSON.parse(session);
     if (s.access_token) {
-      // Show welcome back instead of auto-redirecting
-      const name = existingUser ? JSON.parse(existingUser).name || JSON.parse(existingUser).email : 'your account';
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('register-form').style.display = 'none';
-      document.querySelector('.divider').style.display = 'none';
-      document.querySelector('.guest-link').style.display = 'none';
-      document.querySelector('.tabs').style.display = 'none';
-      document.getElementById('welcome-back').style.display = 'block';
-      document.getElementById('wb-name').textContent = name;
-      document.getElementById('wb-name2').textContent = name;
+      // Validate the session is still good
+      fetch('/api/auth/me', {headers:{'Authorization':'Bearer '+s.access_token}})
+        .then(r => {
+          if (r.ok) {
+            // Session valid — show welcome back
+            const name = existingUser ? JSON.parse(existingUser).name || JSON.parse(existingUser).email : 'your account';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'none';
+            document.querySelector('.divider').style.display = 'none';
+            document.querySelector('.guest-link').style.display = 'none';
+            document.querySelector('.tabs').style.display = 'none';
+            document.getElementById('welcome-back').style.display = 'block';
+            document.getElementById('wb-name').textContent = name;
+            document.getElementById('wb-name2').textContent = name;
+          } else {
+            // Session expired — clear it and show login form
+            localStorage.removeItem('pai_session');
+            localStorage.removeItem('pai_user');
+          }
+        })
+        .catch(() => {
+          localStorage.removeItem('pai_session');
+          localStorage.removeItem('pai_user');
+        });
     }
   } catch(e) { localStorage.removeItem('pai_session'); }
 }
