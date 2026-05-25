@@ -1125,7 +1125,7 @@ app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async
       
       if (userId && supabase) {
         try {
-          await supabase.rpc('exec_sql', { query: `UPDATE profiles SET plan = '${plan}', stripe_customer_id = '${session.customer}', subscription_status = 'active', subscription_updated_at = NOW() WHERE id = '${userId}'` });
+          await supabase.from('profiles').update({ plan: plan, stripe_customer_id: session.customer, subscription_status: 'active', subscription_updated_at: new Date().toISOString() }).eq('id', userId);
         } catch(e) {
           await supabase.from('profiles').update({ plan: plan }).eq('id', userId);
         }
@@ -1201,9 +1201,7 @@ app.post('/api/admin/upgrade', async (req, res) => {
   const { email, plan, admin_key } = req.body;
   if (admin_key !== 'pai-admin-2026') return res.status(403).json({ error: 'Unauthorized' });
   try {
-    const { data, error } = await supabase.rpc('exec_sql', { 
-      query: `UPDATE profiles SET plan = '${plan || 'pro'}', subscription_status = 'active', subscription_updated_at = NOW() WHERE email = '${email}' RETURNING id, email, plan` 
-    });
+    const { data, error } = await supabase.from('profiles').update({ plan: plan || 'pro', subscription_status: 'active', subscription_updated_at: new Date().toISOString() }).eq('email', email).select('id, email, plan');
     if (error) {
       // Fallback: try direct update
       const { error: err2 } = await supabase.from('profiles').update({
