@@ -1243,6 +1243,36 @@ app.get('/login', (req, res) => {
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+// ===== THE RANGE =====
+app.get('/api/range/daily', async (req, res) => {
+  try {
+    if (!supabase) return res.status(500).json({ error: 'Database not configured' });
+    const today = new Date().toISOString().slice(0, 10);
+    let { data: drill } = await supabase
+      .from('drills')
+      .select('id, drill_date, title, brief, intel')
+      .eq('active', true)
+      .lte('drill_date', today)
+      .order('drill_date', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!drill) {
+      const upcoming = await supabase
+        .from('drills')
+        .select('id, drill_date, title, brief, intel')
+        .eq('active', true)
+        .order('drill_date', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      drill = upcoming.data;
+    }
+    if (!drill) return res.status(404).json({ error: 'No drills available' });
+    res.json({ drill });
+  } catch (e) {
+    console.error('Range daily error:', e);
+    res.status(500).json({ error: 'Could not load daily drill' });
+  }
+});
 
 // Start
 // Schema cache refreshed via SQL NOTIFY - no startup code needed
